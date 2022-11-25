@@ -4,9 +4,11 @@
 
 簡易カラオケシステムを作成します。
 
-## Files
-- `plot_waveform.py`: 波形の表示
-- `plot_spectrum.py`: スペクトルの図示
+## Files & Directories
+- `src`
+  - `plot_waveform.py`: 音声から波形図を作成
+  - `plot_spectrum.py`: 音声からスペクトル図を作成
+  - `plot_spectrogram.py`: 音声からスペクトログラムを作成
 
 ## usage of SOX
 - 録音：`sox -r 16k -b 16 -c 1 -d output.wav trim 0 10`

@@ -14,7 +14,7 @@ import librosa
 SR = 16000
 
 # 音声ファイルの読み込み
-x, _ = librosa.load('aiueo.wav', sr=SR)
+x, _ = librosa.load('ex01/ex1_2.wav', sr=SR)
 
 #
 # 短時間フーリエ変換
@@ -95,6 +95,4 @@ plt.show()
 # 縦軸の最大値はサンプリング周波数の半分 = 16000 / 2 = 8000 Hz となる
 
 # 画像ファイルに保存
-fig.savefig('plot-spectogram.png')
-
-
+fig.savefig('ex05/plot-spectrogram.png')

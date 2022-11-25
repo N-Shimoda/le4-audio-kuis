@@ -49,7 +49,7 @@
 \subsection*{あ}
 \begin{figure}[H]
   \centering
-  \includegraphics[scale=0.5]{../ex2/img/plot-spectrum-2000_a.png}
+  \includegraphics[scale=0.5]{../ex02/img/plot-spectrum-2000_a.png}
   \caption{"あ"の振幅スペクトル}
   \label{spectrum_a}
 \end{figure}
@@ -57,7 +57,7 @@
 \subsection*{い}
 \begin{figure}[H]
   \centering
-  \includegraphics[scale=0.5]{../ex2/img/plot-spectrum-2000_i.png}
+  \includegraphics[scale=0.5]{../ex02/img/plot-spectrum-2000_i.png}
   \caption{"い"の振幅スペクトル}
   \label{spectrum_i}
 \end{figure}
@@ -65,7 +65,7 @@
 \subsection*{う}
 \begin{figure}[H]
   \centering
-  \includegraphics[scale=0.5]{../ex2/img/plot-spectrum-2000_u.png}
+  \includegraphics[scale=0.5]{../ex02/img/plot-spectrum-2000_u.png}
   \caption{"う"の振幅スペクトル}
   \label{spectrum_u}
 \end{figure}
@@ -73,7 +73,7 @@
 \subsection*{え}
 \begin{figure}[H]
   \centering
-  \includegraphics[scale=0.5]{../ex2/img/plot-spectrum-2000_e.png}
+  \includegraphics[scale=0.5]{../ex02/img/plot-spectrum-2000_e.png}
   \caption{"え"の振幅スペクトル}
   \label{spectrum_e}
 \end{figure}
@@ -81,7 +81,7 @@
 \subsection*{お}
 \begin{figure}[H]
   \centering
-  \includegraphics[scale=0.5]{../ex2/img/plot-spectrum-2000_o.png}
+  \includegraphics[scale=0.5]{../ex02/img/plot-spectrum-2000_o.png}
   \caption{"お"の振幅スペクトル}
   \label{spectrum_o}
 \end{figure}
@@ -98,5 +98,24 @@ $$ x_t = \sum_{f=0}^{N-1} X_f e^{\frac{2\pi}{N}fit} $$
 この周波数$f (f=0,1,...,N-1)$の正弦波の振幅(重み)を求める方法が離散フーリエ変換であり、次式で表せる。
 
 $$ X_f = \frac{1}{\sqrt{N}} \sum_{t=0}^{N-1} x_t e^{\frac{2\pi}{N}ift} $$
+
+\section{演習5}
+先に録音した区切りのない「あいうえお」のスペクトログラムは図\ref{aiueo_spectrogram}のよう。
+
+\begin{figure}[H]
+  \centering
+  \includegraphics[scale=0.5]{../ex05/plot-spectrogram.png}
+  \caption{「あいうえお」のスペクトログラム}
+  \label{aiueo_spectrogram}
+\end{figure}
+
+ただし、利用した窓関数は長さが512, シフト長10msのハミング窓であり、スペクトログラムの縦軸は周波数、横軸は時間経過を表す。
+
+\section{演習6 : np.fft.rfftとnp.fft.fftの違い}
+$$
+X_f = \frac{1}{\sqrt{N}} \sum_{t=0}^{N-1} x_t e^{-\frac{2\pi}{N}ift}  (f=0,...,N-1)
+$$
+$x_t (t=0,...,N-1)$が複素数であるとき、上式で定められる逆フーリエ変換を、高速フーリエ変換(FFT)に基づいて行うのがnp.fft.fftである。\par
+ここで、$x_t$が実数の場合、$x_t e^{-\frac{2\pi}{N}ift}$ $(f=0,...,N-1)$の値は、$k$番目と$N-1-k$番目が複素共役になる。よって、$N$個のデータうち前半を計算できれば、後半は前半の複素共役として求められる。これを利用して計算回数を減らしたフーリエ変換の計算方法がnp.fft.rfftであり、実数値の信号$x_t$に対してはこれを利用することができる。
 
 \end{document}
