@@ -231,6 +231,11 @@ INPUT out/report1.aux
 INPUT out/report1.aux
 INPUT out/report1.aux
 OUTPUT out/report1.aux
+INPUT /usr/local/texlive/2022/texmf-dist/fonts/tfm/public/cm/cmbx10.tfm
+INPUT ../ex02/img/plot-spectrum-whole_all.png
+INPUT ../ex02/img/plot-spectrum-whole_all.png
+INPUT ../ex02/img/plot-spectrum-whole_all.png
+INPUT extractbb -B cropbox -O ../ex02/img/plot-spectrum-whole_all.png
 INPUT ../ex02/img/plot-spectrum-2000_a.png
 INPUT ../ex02/img/plot-spectrum-2000_a.png
 INPUT ../ex02/img/plot-spectrum-2000_a.png
@@ -268,7 +273,6 @@ INPUT /usr/local/texlive/2022/texmf-dist/tex/latex/amsfonts/umsb.fd
 INPUT /usr/local/texlive/2022/texmf-dist/fonts/tfm/public/amsfonts/symbols/msbm10.tfm
 INPUT /usr/local/texlive/2022/texmf-dist/fonts/tfm/public/amsfonts/symbols/msbm7.tfm
 INPUT /usr/local/texlive/2022/texmf-dist/fonts/tfm/public/amsfonts/symbols/msbm5.tfm
-INPUT /usr/local/texlive/2022/texmf-dist/fonts/tfm/public/cm/cmbx10.tfm
 INPUT /usr/local/texlive/2022/texmf-dist/fonts/tfm/public/cm/cmbx7.tfm
 INPUT /usr/local/texlive/2022/texmf-dist/fonts/tfm/public/cm/cmbx5.tfm
 INPUT /usr/local/texlive/2022/texmf-dist/fonts/tfm/public/cm/cmmib10.tfm

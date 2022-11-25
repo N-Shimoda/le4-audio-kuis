@@ -1,12 +1,13 @@
 # Fdb version 3
-["pdflatex"] 1669357128 "/Users/naoki/github/le4-audio-kuis-main/report/report1.tex" "out/report1.pdf" "report1" 1669357128
+["pdflatex"] 1669359039 "/Users/naoki/github/le4-audio-kuis-main/report/report1.tex" "out/report1.pdf" "report1" 1669359039
   "../ex02/img/plot-spectrum-2000_a.png" 1669344160 34197 ef298a90c94f69dd2fc0b552c7a651cf ""
   "../ex02/img/plot-spectrum-2000_e.png" 1669344253 37279 460cc27444e4c8c885440dcfce130f71 ""
   "../ex02/img/plot-spectrum-2000_i.png" 1669344224 36134 fd5720f8f12d4593bf4a2420ae69010e ""
   "../ex02/img/plot-spectrum-2000_o.png" 1669344266 34552 8310047b7a7cf2ccbd647e1c1f943e3e ""
   "../ex02/img/plot-spectrum-2000_u.png" 1669344239 35920 8ca33ae0a699b602d7bbc06155d7c448 ""
-  "../ex05/plot-spectrogram.png" 1669355401 275083 95378bffe8769f32cb52bbdb24272651 ""
-  "/Users/naoki/github/le4-audio-kuis-main/report/report1.tex" 1669357124 4174 47d5713e28a5c5d1d09b214f6ffcf991 ""
+  "../ex02/img/plot-spectrum-whole_all.png" 1669343415 26680 8dc5de95d9d1fddd88268c655a7ff05c ""
+  "../ex05/plot-spectrogram.png" 1669357889 291552 ea98d45ff474c61a002ee3bb4099ab0a ""
+  "/Users/naoki/github/le4-audio-kuis-main/report/report1.tex" 1669359030 4435 fbd05cfdee51a6566a6002564cd678a3 ""
   "/usr/local/texlive/2022/texmf-dist/fonts/map/fontname/texfonts.map" 1577235249 3524 cb3e574dea2d1052e39280babc910dc8 ""
   "/usr/local/texlive/2022/texmf-dist/fonts/tfm/jknappen/ec/tcrm1000.tfm" 1136768653 1536 e07581a4bb3136ece9eeb4c3ffab8233 ""
   "/usr/local/texlive/2022/texmf-dist/fonts/tfm/public/amsfonts/cmextra/cmbsy5.tfm" 1246382020 1120 1e8878807317373affa7f7bba4cf2f6a ""
@@ -53,8 +54,8 @@
   "/usr/local/texlive/2022/texmf-dist/web2c/texmf.cnf" 1646502317 40171 cdab547de63d26590bebb3baff566530 ""
   "/usr/local/texlive/2022/texmf-var/web2c/pdftex/pdflatex.fmt" 1649903012 2826437 446cbe0bc28b180de1b2652c0f56d9d1 ""
   "/usr/local/texlive/2022/texmf.cnf" 1647878952 577 209b46be99c9075fd74d4c0369380e8c ""
-  "out/report1.aux" 1669357128 32 3985256e7290058c681f74d7a3565a19 "pdflatex"
-  "report1.tex" 1669357130 4179 c5fd82cc8d3d5c7a3726072465d00701 ""
+  "out/report1.aux" 1669359039 32 3985256e7290058c681f74d7a3565a19 "pdflatex"
+  "report1.tex" 1669359030 4435 fbd05cfdee51a6566a6002564cd678a3 ""
   (generated)
   "out/report1.aux"
   "out/report1.log"
