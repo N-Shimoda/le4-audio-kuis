@@ -13,7 +13,7 @@ import librosa
 SR = 16000
 
 # 音声ファイルの読み込み
-x, _ = librosa.load('ex1_2.wav', sr=SR)
+x, _ = librosa.load('/Users/naoki/github/le4-audio-kuis-main/out/ex1_2.wav', sr=SR)
 
 # xに波形データが保存される
 # 第二戻り値はサンプリングレート（ここでは必要ないので _ としている）
@@ -35,6 +35,4 @@ plt.xlabel('Sampling point')					# x軸のラベルを設定
 plt.show()										# 表示
 
 # 画像ファイルに保存
-fig.savefig('plot-waveform.png')
-
-
+fig.savefig('img/plot-waveform.png')

@@ -10,11 +10,13 @@ import matplotlib.pyplot as plt
 import numpy as np
 import librosa
 
+letter = '_o'
+
 # サンプリングレート
 SR = 16000
 
 # 音声ファイルの読み込み
-x, _ = librosa.load('ex1_2.wav', sr=SR)
+x, _ = librosa.load('out/ex2/o.wav', sr=SR)
 
 # 高速フーリエ変換
 # np.fft.rfftを使用するとFFTの前半部分のみが得られる
@@ -45,7 +47,7 @@ plt.plot(x_data, fft_log_abs_spec)			# 描画
 plt.show()
 
 # 画像ファイルに保存
-fig.savefig('plot-spectrum-whole.png')
+fig.savefig('img/plot-spectrum-whole' + letter + '.png')
 
 # 横軸を0~2000Hzに拡大
 # xlimで表示の領域を変えるだけ
@@ -59,4 +61,4 @@ plt.plot(x_data, fft_log_abs_spec)
 plt.show()
 
 # 画像ファイルに保存
-fig.savefig('plot-spectrum-2000.png')
+fig.savefig('img/plot-spectrum-2000' + letter + '.png')
