@@ -1,7 +1,7 @@
 # latex
-.aux
-.log
-.toc
+*.aux
+*.log
+*.toc
 
 a.wav
 aiueo.wav
