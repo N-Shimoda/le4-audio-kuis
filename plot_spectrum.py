@@ -14,7 +14,7 @@ import librosa
 SR = 16000
 
 # 音声ファイルの読み込み
-x, _ = librosa.load('a.wav', sr=SR)
+x, _ = librosa.load('ex1_2.wav', sr=SR)
 
 # 高速フーリエ変換
 # np.fft.rfftを使用するとFFTの前半部分のみが得られる

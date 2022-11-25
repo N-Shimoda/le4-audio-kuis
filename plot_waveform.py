@@ -13,7 +13,7 @@ import librosa
 SR = 16000
 
 # 音声ファイルの読み込み
-x, _ = librosa.load('aiueo.wav', sr=SR)
+x, _ = librosa.load('ex1_1.wav', sr=SR)
 
 # xに波形データが保存される
 # 第二戻り値はサンプリングレート（ここでは必要ないので _ としている）
