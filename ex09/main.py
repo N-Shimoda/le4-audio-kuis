@@ -13,7 +13,7 @@ import numpy as np
 import librosa
 
 # choose from ["catena", "separato"]
-data_type = "separato"
+data_type = "catena"
 print("data type:", data_type)
 
 # サンプリングレート
@@ -35,6 +35,7 @@ size_shift = 16000 / 100	# 0.01 sec (10 msec) because 1 sec has size of 16000
 
 # スペクトログラムを保存するlist
 volume_data = []
+speaking_area = []
 
 # size_shift分ずらしながらsize_frame分のデータを取得
 # np.arange関数はfor文で辿りたい数値のリストを返す
@@ -53,6 +54,9 @@ for i in np.arange(0, len(x)-size_frame, size_shift):
   # convert RMS into volume [dB]
   volume_dB = 20 * np.log10(rms)
 
+  if volume_dB > -7:
+    speaking_area.append(i / SR)
+
 	# 低周波の部分のみを拡大したい場合
 	# 例えば、500Hzまでを拡大する
 	# また、最後のほうの画像描画処理において、
@@ -64,18 +68,21 @@ for i in np.arange(0, len(x)-size_frame, size_shift):
 	# 計算した対数振幅スペクトログラムを配列に保存
   volume_data.append(volume_dB)
 
+
+# Show speaking_area
+print("speaking_area is", [speaking_area[0], speaking_area[-1]])
+print(volume_data)
+
 #
 # スペクトログラムを画像に表示・保存
 #
 
 fig = plt.figure()
-x_data = range(0, size_frame*len(volume_data), size_frame)
-# x_data = range(len(volume_data))
+x_data = np.arange(0, len(volume_data)*size_shift/SR, size_shift/SR)
 
 # スペクトログラムを描画
-plt.xlabel('time')		# x軸のラベルを設定
+plt.xlabel('time [s]')		# x軸のラベルを設定
 plt.ylabel('Volume [dB]')				# y軸のラベルを設定
-# plt.xlim([0, SR])					# x軸の範囲を設定
 plt.plot(x_data, volume_data)			# 描画
 
 # 表示
