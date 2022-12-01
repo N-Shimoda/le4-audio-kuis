@@ -13,7 +13,7 @@ import numpy as np
 import librosa
 
 # choose from ["catena", "separato"]
-data_type = "catena"
+data_type = "separato"
 print("data type:", data_type)
 
 # サンプリングレート
