@@ -10,11 +10,15 @@ import matplotlib.pyplot as plt
 import numpy as np
 import librosa
 
+# choose from ["catena", "separato"]
+data_type = "catena"
+print("data type: [", data_type, "]")
+
 # サンプリングレート
 SR = 16000
 
 # 音声ファイルの読み込み
-x, _ = librosa.load('ex01/catena.wav', sr=SR)
+x, _ = librosa.load('/Users/naoki/github/le4-audio-kuis-main/ex01/' + data_type + '.wav', sr=SR)
 
 #
 # 短時間フーリエ変換
@@ -66,8 +70,8 @@ for i in np.arange(0, len(x)-size_frame, size_shift):
 	# また、最後のほうの画像描画処理において、
 	# 	extent=[0, len(x), 0, 500], 
 	# にする必要があることに注意
-	# size_target = int(len(fft_log_abs_spec) * (500 / (SR/2)))
-	# fft_log_abs_spec = fft_log_abs_spec[:size_target]
+	size_target = int(len(fft_log_abs_spec) * (500 / (SR/2)))
+	fft_log_abs_spec = fft_log_abs_spec[:size_target]
 
 	# 計算した対数振幅スペクトログラムを配列に保存
 	spectrogram.append(fft_log_abs_spec)
@@ -82,10 +86,10 @@ fig = plt.figure()
 
 # スペクトログラムを描画
 plt.xlabel('sample')					# x軸のラベルを設定
-plt.ylabel('frequency [Hz]')		# y軸のラベルを設定
+plt.ylabel('Frequency [Hz]')		# y軸のラベルを設定
 plt.imshow(
 	np.flipud(np.array(spectrogram).T),		# 画像とみなすために，データを転置して上下反転
-	extent=[0, len(x), 0, SR/2],			# (横軸の原点の値，横軸の最大値，縦軸の原点の値，縦軸の最大値)
+	extent=[0, len(x), 0, 500],			# (横軸の原点の値，横軸の最大値，縦軸の原点の値，縦軸の最大値)
 	aspect='auto',
 	interpolation='nearest'
 )
@@ -95,4 +99,4 @@ plt.show()
 # 縦軸の最大値はサンプリング周波数の半分 = 16000 / 2 = 8000 Hz となる
 
 # 画像ファイルに保存
-fig.savefig('ex05/plot-spectrogram.png')
+fig.savefig('ex10/fig/spectrogram_' + data_type + '.png')
