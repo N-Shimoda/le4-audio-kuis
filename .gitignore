@@ -3,9 +3,6 @@
 *.log
 *.toc
 
-a.wav
-aiueo.wav
-output.wav
 plot-spectogram.png
 
 wav
