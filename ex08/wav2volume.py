@@ -1,59 +1,57 @@
 # convert .wav file into volume figure
 
+# 【補足】
+# 配列（リスト）のデータ参照
+# list[A:B] listのA番目からB-1番目までのデータを取得
+
+# 【補足】
+# 配列（リスト）のデータ参照
+# list[:B] listの先頭からB-1番目までのデータを取得
+
 import matplotlib.pyplot as plt
 import numpy as np
 import librosa
+
+# choose from ["catena", "separato"]
+data_type = "catena"
+print("data type:", data_type)
 
 # サンプリングレート
 SR = 16000
 
 # 音声ファイルの読み込み
-x, _ = librosa.load('ex01/ex1_2.wav', sr=SR)
+x, _ = librosa.load('/Users/naoki/github/le4-audio-kuis-main/ex01/' + data_type + '.wav', sr=SR)
 
 #
 # 短時間フーリエ変換
 #
 
-# フレームサイズ
+# create hamming window
 size_frame = 512			# 2のべき乗
-
-# フレームサイズに合わせてハミング窓を作成
 hamming_window = np.hamming(size_frame)
 
 # シフトサイズ
-size_shift = 16000 / 100	# 0.01 秒 (10 msec)
+size_shift = 16000 / 100	# 0.01 sec (10 msec) because 1 sec has size of 16000
 
 # スペクトログラムを保存するlist
-spectrogram = []
+volume_data = []
 
 # size_shift分ずらしながらsize_frame分のデータを取得
 # np.arange関数はfor文で辿りたい数値のリストを返す
 # 通常のrange関数と違うのは3つ目の引数で間隔を指定できるところ
 # (初期位置, 終了位置, 1ステップで進める間隔)
 for i in np.arange(0, len(x)-size_frame, size_shift):
-	
-	# 該当フレームのデータを取得
-	idx = int(i)	# arangeのインデクスはfloatなのでintに変換
-	x_frame = x[idx : idx+size_frame]
-	
-	# 【補足】
-	# 配列（リスト）のデータ参照
-	# list[A:B] listのA番目からB-1番目までのデータを取得
+  
+  # 該当フレームのデータを取得
+  idx = int(i)	# arangeのインデクスはfloatなのでintに変換
+  x_frame = x[idx : idx+size_frame]
+  
+  # calculate RMS
+  abs_fft_spec = np.abs( np.fft.rfft(x_frame * hamming_window) )
+  rms = np.sqrt(np.sum(abs_fft_spec ** 2) / size_frame)
 
-	# 窓掛けしたデータをFFT
-	# np.fft.rfftを使用するとFFTの前半部分のみが得られる
-	fft_spec = np.fft.rfft(x_frame * hamming_window)
-	
-	# np.fft.fft / np.fft.fft2 を用いた場合
-	# 複素スペクトログラムの前半だけを取得
-	#fft_spec_first = fft_spec[:int(size_frame/2)]
-
-	# 【補足】
-	# 配列（リスト）のデータ参照
-	# list[:B] listの先頭からB-1番目までのデータを取得
-
-	# 複素スペクトログラムを対数振幅スペクトログラムに
-	fft_log_abs_spec = np.log(np.abs(fft_spec))
+  # convert RMS into volume [dB]
+  volume_dB = 20 * np.log10(rms)
 
 	# 低周波の部分のみを拡大したい場合
 	# 例えば、500Hzまでを拡大する
@@ -64,29 +62,24 @@ for i in np.arange(0, len(x)-size_frame, size_shift):
 	# fft_log_abs_spec = fft_log_abs_spec[:size_target]
 
 	# 計算した対数振幅スペクトログラムを配列に保存
-	spectrogram.append(fft_log_abs_spec)
-
+  volume_data.append(volume_dB)
 
 #
 # スペクトログラムを画像に表示・保存
 #
 
-# 画像として保存するための設定
 fig = plt.figure()
+x_data = range(0, size_frame*len(volume_data), size_frame)
+# x_data = range(len(volume_data))
 
 # スペクトログラムを描画
-plt.xlabel('sample')					# x軸のラベルを設定
-plt.ylabel('frequency [Hz]')		# y軸のラベルを設定
-plt.imshow(
-	np.flipud(np.array(spectrogram).T),		# 画像とみなすために，データを転置して上下反転
-	extent=[0, len(x), 0, SR/2],			# (横軸の原点の値，横軸の最大値，縦軸の原点の値，縦軸の最大値)
-	aspect='auto',
-	interpolation='nearest'
-)
+plt.xlabel('time')		# x軸のラベルを設定
+plt.ylabel('Volume [dB]')				# y軸のラベルを設定
+# plt.xlim([0, SR])					# x軸の範囲を設定
+plt.plot(x_data, volume_data)			# 描画
+
+# 表示
 plt.show()
 
-# 【補足】
-# 縦軸の最大値はサンプリング周波数の半分 = 16000 / 2 = 8000 Hz となる
-
 # 画像ファイルに保存
-fig.savefig('ex05/plot-spectrogram.png')
+fig.savefig('fig/volume_' + data_type + '.png')

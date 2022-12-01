@@ -5,5 +5,5 @@
 
 ## 方針
 - 元のデータ：
-  - ex1_1.wav（連続）
-  - ex1_2.wav（区切りあり）
+  - catena.wav（連続）
+  - separato.wav（区切りあり）
