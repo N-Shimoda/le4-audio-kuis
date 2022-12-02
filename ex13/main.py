@@ -42,7 +42,7 @@ fft_log_abs_spec = np.log(np.abs(amplitude_spectrum))
 print("length of cepstrum:", len(cepstrum))
 
 # Step3: Get cepstrum of the 13 lowest frequency
-cepstrum[14:] = 0
+cepstrum[14:-14] = 0
 
 # Step4: apply inverse-FFT
 spectrum_envelope = np.fft.ifft(cepstrum)

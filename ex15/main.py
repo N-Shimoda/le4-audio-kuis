@@ -12,6 +12,15 @@ import numpy as np
 import matplotlib.pyplot as plt
 import zero_cross
 
+
+zc_limit = 50   # zero-cross per frame
+dB_limit = -20
+filename = "sound"
+print("zc_limit:", zc_limit)
+print("dB_limit:", dB_limit)
+print("filename:", filename)
+
+
 # same code as ex11/my_correlate.py
 def is_peak(a, index):
 
@@ -66,32 +75,39 @@ def calculate_f0(x_frame, SR):
            f0   [fundamental frequency]
   return : True or False
 """
-def isVoiceSound(sound_frame, f0):
+def isVoiceSound(sound_frame):
+
+  global zc_limit
 
   # calculate zero cross
   zc = zero_cross.zero_cross_short(sound_frame)
+  # zc_limit = 300
 
+  return zc < zc_limit
+
+  """
   # acceptable error
-  alpha = 100
+  alpha = 1
 
-  # return ( f0*(2-alpha) < zc and zc < f0*(2+alpha) )
-  return True
+  return ( f0*(2-alpha) < zc and zc < f0*(2+alpha) )
+  """
 
 
 # Sampling Rate
 SR = 16000
 
 # load sound file (.wav)
-x, _ = librosa.load('/Users/naoki/github/le4-audio-kuis-main/ex15/sound.wav', sr=SR)
+x, _ = librosa.load('/Users/naoki/github/le4-audio-kuis-main/ex15/' + filename + ".wav", sr=SR)
 
 # フレームサイズ, 窓関数, シフトサイズ
-size_frame = 512          # 2のべき乗
+size_frame = 2048          # 2のべき乗
 hamming_window = np.hamming(size_frame)
 size_shift = 16000 / 100	# 0.01 秒 (10 msec)
 
 # fundamental frequency
 f0_list = []
 spectrogram = []
+
 
 # 元データをフレームごとに分割
 for i in np.arange(0, len(x)-size_frame, size_shift):
@@ -103,13 +119,26 @@ for i in np.arange(0, len(x)-size_frame, size_shift):
   # calculate f0
   f0 = calculate_f0(x_frame, SR)
 
-  # if x_frame is not voice sound, f0 should be 0
-  if( isVoiceSound(x_frame, f0) ):
-    f0_list.append(f0)
-  else:
-    f0_list.append(0)
+
+  # If x_frame does not contain voice sound, f0 should be 0
+  if( not isVoiceSound(x_frame) ):
+    f0 = 0
+
+  # If volume is very small, f0 should be 0
+  # calculate RMS
+  abs_fft_spec = np.abs( np.fft.rfft(x_frame * hamming_window) )
+  rms = np.sqrt(np.sum(abs_fft_spec ** 2) / size_frame)
+
+  # convert RMS into volume [dB]
+  volume_dB = 20 * np.log10(rms)
+
+  if volume_dB < dB_limit:
+    f0 = 0
+
+  f0_list.append(f0)
 
   
+  # calculate for spectrogram
   fft_spec = np.fft.rfft(x_frame * hamming_window)
   fft_log_abs_spec = np.log(np.abs(fft_spec))
   spectrogram.append(fft_log_abs_spec)
@@ -119,22 +148,22 @@ for i in np.arange(0, len(x)-size_frame, size_shift):
 fig = plt.figure()
 
 # draw spectrogram
-ax1 = fig.add_subplot(111)
-ax1.set_xlabel('Time [s]')
-ax1.set_ylabel('Frequency [Hz]')
-ax1.imshow(
-  np.flipud(np.array(spectrogram).T),
+plt.xlabel('Time [s]')
+plt.ylabel('Frequency [Hz]')
+plt.imshow(
+	np.flipud(np.array(spectrogram).T),
   extent=[0, len(x)/SR, 0, 8000],     # 2nd arg is `duration` (i.e. filesize)
   aspect='auto',
   interpolation='nearest'
 )
 
 # draw f0
-ax2 = ax1.twinx()
-ax2.set_ylabel('frequency of f0 [Hz]')
 x_data = np.linspace(0, len(x)/SR, len(f0_list))
-ax2.plot(x_data, f0_list, c='y')
+plt.plot(x_data, f0_list, c='k')
+
+plt.ylim([0, 300])
 
 plt.show()
 
-fig.savefig("ex15/fig/spectrogram_with_f0.png")
+# save image file
+fig.savefig("ex15/fig/spectrogram_with_f0-" + filename + "-" + str(zc_limit) + ".png")
