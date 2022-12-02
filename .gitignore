@@ -1,11 +1,7 @@
+*.wav
+*.png
+
 # latex
 *.aux
 *.log
 *.toc
-
-plot-spectogram.png
-
-wav
-mp3
-sinuoid_test.wav
-test.wav

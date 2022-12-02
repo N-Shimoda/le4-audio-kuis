@@ -99,4 +99,4 @@ plt.show()
 # 縦軸の最大値はサンプリング周波数の半分 = 16000 / 2 = 8000 Hz となる
 
 # 画像ファイルに保存
-fig.savefig('ex10/fig/spectrogram_' + data_type + '.png')
+fig.savefig('ex11/fig/spectrogram_' + data_type + '.png')
