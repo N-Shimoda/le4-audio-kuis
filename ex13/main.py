@@ -25,7 +25,7 @@ def get_cepstrum(amplitude_spectrum):
 SR = 16000
 
 # choose from ["catena", "separato"]
-data_type = "separato"
+data_type = "catena"
 print("data type: [", data_type, "]")
 
 # load sound file (.wav)
