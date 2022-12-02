@@ -24,12 +24,12 @@ def get_cepstrum(amplitude_spectrum):
 # サンプリングレート
 SR = 16000
 
-# choose from ["catena", "separato"]
-data_type = "separato"
+# choose from ["a", "i", "u", "e", "o"]
+data_type = "o"
 print("data type: [", data_type, "]")
 
 # load sound file (.wav)
-x, _ = librosa.load('/Users/naoki/github/le4-audio-kuis-main/ex01/' + data_type + '.wav', sr=SR)
+x, _ = librosa.load('/Users/naoki/github/le4-audio-kuis-main/ex02/' + data_type + '.wav', sr=SR)
 
 
 # Step1,2: 振幅スペクトルの対数をとる
@@ -56,4 +56,4 @@ plt.plot(spectrum_envelope)
 plt.show()
 
 # 画像ファイルに保存
-fig.savefig('ex13/fig/plot-spectrum_' + data_type + '.png')
+fig.savefig('ex14/fig/plot-spectrum_' + data_type + '.png')
