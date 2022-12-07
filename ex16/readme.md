@@ -15,3 +15,9 @@
   + パラメータ μ, Σ を調整する。
 
 - 学習したモデルの保存・読み込みには`pickle`を利用する。
+  + cepstrum_model() に渡すパラメータを保存しておく
+
+## files & directories
+- `pickle_test`: (directory)
+- `learning.py`: パラメータ μ, Σ の学習プログラム
+- `speech_recognition.py`: 学習に基づく音声認識をスペクトログラムに表示
