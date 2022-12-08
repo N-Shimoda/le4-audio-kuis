@@ -1,7 +1,7 @@
 import matplotlib.pyplot as plt
 import numpy as np
 import librosa
-import models
+import my_models
 
 dim = 13
 
@@ -54,7 +54,7 @@ for i in np.arange(0, len(x)-size_frame, size_shift):
   # extract cepstrum of low index (0~dim & -dim~)
   cepstrum = np.concatenate([cepstrum[:dim], cepstrum[-dim:]])
 
-  recognition.append( models.recognize_word(cepstrum) )
+  recognition.append( my_models.recognize_word(cepstrum) )
 
 
 # 
