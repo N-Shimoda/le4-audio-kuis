@@ -17,6 +17,8 @@
 - 学習したモデルの保存・読み込みには`pickle`を利用する。
   + cepstrum_model() に渡すパラメータを保存しておく
 
+- 学習データには、自分で録音した音声 `ex02/x.wav` を利用し、テストデータは授業サイトの `aiueo.wav` を利用する。
+
 ## files & directories
 - `pickle_test`: (directory)
 - `learning.py`: パラメータ μ, Σ の学習プログラム
