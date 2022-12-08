@@ -1,88 +1,65 @@
+import matplotlib.pyplot as plt
+import numpy as np
+import librosa
+import pickle
+
 """
   Function to 
   params : x_frame
   return : estimated cepstrum group?
 """
-def cepstrum_model(x_frame):
+def recognize_word(x_frame):
   pass
 
 
-# ライブラリの読み込み
-import matplotlib.pyplot as plt
-import numpy as np
-import librosa
-
-# サンプリングレート
+# 
+# Step1: Load sound file and parameters
+#
+# load .wav file
 SR = 16000
+x, _ = librosa.load('ex16/sound/aiueo.wav', sr=SR)
 
-# 音声ファイルの読み込み
-x, _ = librosa.load('ex01/catena.wav', sr=SR)
+# load .pickle file
+with open("ex16/mu_sigma_result.pickle", mode="rb") as f:
+  result = pickle.load(f)
+
+print(result)
+
 
 #
-# 短時間フーリエ変換
+# Step2: Use `Short-time Fourie Transform` to
+#   (i)  calculate spectrogram 
+#   (ii) conduct speech recognition
 #
 
-# フレームサイズ
+# preference of frame
 size_frame = 512			# 2のべき乗
-
-# フレームサイズに合わせてハミング窓を作成
 hamming_window = np.hamming(size_frame)
+size_shift = SR / 100	# 0.01 秒 (10 msec)
 
-# シフトサイズ
-size_shift = 16000 / 100	# 0.01 秒 (10 msec)
-
-# スペクトログラムを保存するlist
+# list for storing results
 spectrogram = []
+recognition = []
 
-# size_shift分ずらしながらsize_frame分のデータを取得
-# np.arange関数はfor文で辿りたい数値のリストを返す
-# 通常のrange関数と違うのは3つ目の引数で間隔を指定できるところ
-# (初期位置, 終了位置, 1ステップで進める間隔)
+
 for i in np.arange(0, len(x)-size_frame, size_shift):
 	
-	# 該当フレームのデータを取得
-	idx = int(i)	# arangeのインデクスはfloatなのでintに変換
+	# sound data of current frame
+	idx = int(i)
 	x_frame = x[idx : idx+size_frame]
-	
-	# 【補足】
-	# 配列（リスト）のデータ参照
-	# list[A:B] listのA番目からB-1番目までのデータを取得
 
-	# 窓掛けしたデータをFFT
-	# np.fft.rfftを使用するとFFTの前半部分のみが得られる
-	fft_spec = np.fft.rfft(x_frame * hamming_window)
-	
-	# np.fft.fft / np.fft.fft2 を用いた場合
-	# 複素スペクトログラムの前半だけを取得
-	#fft_spec_first = fft_spec[:int(size_frame/2)]
-
-	# 【補足】
-	# 配列（リスト）のデータ参照
-	# list[:B] listの先頭からB-1番目までのデータを取得
-
-	# 複素スペクトログラムを対数振幅スペクトログラムに
-	fft_log_abs_spec = np.log(np.abs(fft_spec))
-
-	# 低周波の部分のみを拡大したい場合
-	# 例えば、500Hzまでを拡大する
-	# また、最後のほうの画像描画処理において、
-	# 	extent=[0, len(x), 0, 500], 
-	# にする必要があることに注意
-	# size_target = int(len(fft_log_abs_spec) * (500 / (SR/2)))
-	# fft_log_abs_spec = fft_log_abs_spec[:size_target]
-
-	# 計算した対数振幅スペクトログラムを配列に保存
-	spectrogram.append(fft_log_abs_spec)
-
-
+  # Calculate spectrum
+  fft_spec = np.fft.rfft(x_frame * hamming_window)
+  fft_log_abs_spec = np.log(np.abs(fft_spec))
+  spectrogram.append(fft_log_abs_spec)
+  recognize_word(x_frame)
+# 
+# Draw Figure
 #
-# スペクトログラムを画像に表示・保存
-#
-
-# 画像として保存するための設定
+# preference of figure
 fig = plt.figure()
 
-# スペクトログラムを描画
+# draw spectrogram
 plt.xlabel('sample')					# x軸のラベルを設定
 plt.ylabel('frequency [Hz]')		# y軸のラベルを設定
 plt.imshow(
@@ -93,8 +70,6 @@ plt.imshow(
 )
 plt.show()
 
-# 【補足】
-# 縦軸の最大値はサンプリング周波数の半分 = 16000 / 2 = 8000 Hz となる
 
-# 画像ファイルに保存
-fig.savefig('ex05/plot-spectrogram.png')
+# save as .png file
+fig.savefig('ex16/fig/spectrogram_with_recognition.png')

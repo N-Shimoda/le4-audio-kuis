@@ -31,6 +31,7 @@ for word in words:
 
   # 
   # Step1: `mu`
+  #
   # list for storing result
   mu_list = []
 
@@ -58,6 +59,7 @@ for word in words:
 
   # 
   # Step2: `Sigma`
+  #
   # list for storing result
   sigma_sq_list = []
 
@@ -77,12 +79,14 @@ for word in words:
 
   #
   # Step3: Store result
+  #
   mu_result.append(mu)
   Sigma_result.append(Sigma)
 
 
 # 
-# Store results in .pickle file
+# Save results in .pickle file
+#
 print("result[0]: {}".format(result[2]))
 with open("ex16/mu_sigma_result.pickle", mode="wb") as f:
   pickle.dump(result, f)
