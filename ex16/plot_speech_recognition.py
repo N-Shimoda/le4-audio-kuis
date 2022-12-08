@@ -75,6 +75,5 @@ plt.imshow(
 )
 plt.show()
 
-
 # save as .png file
 fig.savefig('ex16/fig/spectrogram_with_recognition.png')

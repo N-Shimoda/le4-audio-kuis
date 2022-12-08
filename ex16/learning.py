@@ -87,6 +87,6 @@ for word in words:
 # 
 # Save results in .pickle file
 #
-print("result[0]: {}".format(result[2]))
+# print("result[0]: {}".format(result[2]))
 with open("ex16/mu_sigma_result.pickle", mode="wb") as f:
   pickle.dump(result, f)
