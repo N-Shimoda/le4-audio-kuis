@@ -1,5 +1,6 @@
 import pickle
 import numpy as np
+import scipy
 
 """
   Function to 
@@ -18,7 +19,7 @@ def recognize_word(cepstrum):
     p_list.append(p)
 
   print("p_list: {}".format(p_list))
-  print("type of p_list[0]: {}".format(type(p_list[0])))
+  print("len(p_list[0]): {}".format(len(p_list[0])))
 
   max_p = max(p_list)
   max_index = p_list.index(max_p)
@@ -49,6 +50,7 @@ def my_model(cepstrum, word):
   # Calculate probability based on normal distribution
   Sigma_inv = np.linalg.inv(Sigma)
   expo = - (cepstrum - mu).T * Sigma_inv * (cepstrum - mu) / 2      # exponents
+  print("shpae of expo = {}".format( expo.shape ))
   denom = ((2*np.pi) ** (dim/2)) * (np.linalg.det(Sigma) ** 0.5)    # denominator
 
   p = np.exp(expo) / denom
