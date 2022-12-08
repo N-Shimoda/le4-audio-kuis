@@ -1,29 +1,17 @@
 import matplotlib.pyplot as plt
 import numpy as np
 import librosa
-import pickle
+import models
 
-"""
-  Function to 
-  params : x_frame
-  return : estimated cepstrum group?
-"""
-def recognize_word(x_frame):
-  pass
-
+dim = 13
 
 # 
 # Step1: Load sound file and parameters
 #
+
 # load .wav file
 SR = 16000
 x, _ = librosa.load('ex16/sound/aiueo.wav', sr=SR)
-
-# load .pickle file
-with open("ex16/mu_sigma_result.pickle", mode="rb") as f:
-  result = pickle.load(f)
-
-print(result)
 
 
 #
@@ -42,17 +30,33 @@ spectrogram = []
 recognition = []
 
 
+# calculate spectrum & word recognition for each frames
 for i in np.arange(0, len(x)-size_frame, size_shift):
-	
-	# sound data of current frame
-	idx = int(i)
-	x_frame = x[idx : idx+size_frame]
+  
+  # sound data of current frame
+  idx = int(i)
+  x_frame = x[idx : idx+size_frame]
 
-  # Calculate spectrum
+  #
+  # Step2-(i): Calculate spectrum
   fft_spec = np.fft.rfft(x_frame * hamming_window)
   fft_log_abs_spec = np.log(np.abs(fft_spec))
   spectrogram.append(fft_log_abs_spec)
-  recognize_word(x_frame)
+
+  #
+  # Step2-(ii): Speech recognition
+
+  # Calculate cepstrum
+  amp_spectrum = np.fft.rfft(x_frame)
+  log_abs_spectrum = np.log( np.abs(amp_spectrum) )
+  cepstrum = np.fft.fft(log_abs_spectrum)
+
+  # extract cepstrum of low index (0~dim & -dim~)
+  cepstrum = np.concatenate([cepstrum[:dim], cepstrum[-dim:]])
+
+  recognition.append( models.recognize_word(cepstrum) )
+
+
 # 
 # Draw Figure
 #
@@ -60,8 +64,9 @@ for i in np.arange(0, len(x)-size_frame, size_shift):
 fig = plt.figure()
 
 # draw spectrogram
-plt.xlabel('sample')					# x軸のラベルを設定
-plt.ylabel('frequency [Hz]')		# y軸のラベルを設定
+plt.title('Spectrogram with speech recognition')
+plt.xlabel('Time [s]')					# x軸のラベルを設定
+plt.ylabel('Frequency [Hz]')		# y軸のラベルを設定
 plt.imshow(
 	np.flipud(np.array(spectrogram).T),		# 画像とみなすために，データを転置して上下反転
 	extent=[0, len(x), 0, SR/2],			# (横軸の原点の値，横軸の最大値，縦軸の原点の値，縦軸の最大値)
