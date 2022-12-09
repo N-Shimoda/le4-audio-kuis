@@ -6,15 +6,17 @@ import pickle
 import librosa
 import numpy as np
 
-words = ["a", "i", "u", "e", "o"]
 
 # dimention of cepstrum
-dim = 13
+dim = 18
+words = ["a", "i", "u", "e", "o"]
+
 
 # list for storing result
 mu_result = []
 Sigma_result = []
-result = [words, mu_result, Sigma_result]
+sigma_elements = []
+result = [words, mu_result, Sigma_result, sigma_elements, dim]
 
 
 for word in words:
@@ -24,7 +26,7 @@ for word in words:
   x, _ =  librosa.load('ex02/' + word + '.wav', sr=SR)
 
   # preference of frame
-  size_frame = 512
+  size_frame = 256
   hamming_window = np.hamming(size_frame)
   size_shift = SR / 100   # 0.01 sec (10 msec)
 
@@ -45,10 +47,11 @@ for word in words:
     # calculate cepstrum
     amp_spectrum = np.fft.rfft(x_frame)
     log_abs_spectrum = np.log( np.abs(amp_spectrum) )
-    cepstrum = np.fft.fft(log_abs_spectrum)
+    cepstrum = np.abs( np.fft.fft(log_abs_spectrum) )
 
     # extract cepstrum of low index (0~dim & -dim~)
-    cepstrum = np.concatenate([cepstrum[:dim], cepstrum[-dim:]])
+    # cepstrum = np.concatenate([cepstrum[:dim], cepstrum[-dim:]])
+    cepstrum = cepstrum[:dim]
     mu_list.append(cepstrum)
 
   # average of cepstrum [mu]
@@ -61,7 +64,7 @@ for word in words:
   # Step2: `Sigma`
   #
   # list for storing result
-  sigma_sq_list = []
+  sigma_sq_list = []    # matrix
 
   # calculate sigma^2 for each frame
   for cepstrum in mu_list:
@@ -69,8 +72,6 @@ for word in words:
 
   # diagonal elements of Sigma
   sigma_sq = sum(sigma_sq_list)/len(sigma_sq_list)
-  # print("diagonal elements of Sigma: ")
-  # print(sigma_sq)
   
   # covariance matrix [Sigma]
   Sigma = np.diag(sigma_sq)
@@ -82,11 +83,16 @@ for word in words:
   #
   mu_result.append(mu)
   Sigma_result.append(Sigma)
+  sigma_elements.append(sigma_sq)
 
 
 # 
 # Save results in .pickle file
 #
-# print("result[0]: {}".format(result[2]))
+print("dimention: {}".format(result[4]))
+
 with open("ex16/mu_sigma_result.pickle", mode="wb") as f:
+
   pickle.dump(result, f)
+
+print(">> File written in pickle file.")

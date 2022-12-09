@@ -23,3 +23,10 @@
 - `pickle_test`: (directory)
 - `learning.py`: パラメータ μ, Σ の学習プログラム
 - `speech_recognition.py`: 学習に基づく音声認識をスペクトログラムに表示
+
+## Structure of pickle file
+- `mu_sigma_result` (top variable of type list)
+  + `words`
+  + `mu_result`
+  + `Sigma_result`
+  + `sigma_elements`

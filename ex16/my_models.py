@@ -1,6 +1,5 @@
 import pickle
 import numpy as np
-import scipy
 
 """
   Function to 
@@ -18,8 +17,8 @@ def recognize_word(cepstrum):
     p = my_model(cepstrum, word)
     p_list.append(p)
 
-  print("p_list: {}".format(p_list))
-  print("len(p_list[0]): {}".format(len(p_list[0])))
+  # print("p_list: {}".format(p_list))
+  # print("len(p_list): {}".format(len(p_list)))
 
   max_p = max(p_list)
   max_index = p_list.index(max_p)
@@ -35,23 +34,31 @@ def recognize_word(cepstrum):
 """
 def my_model(cepstrum, word):
 
-  # dimention of cepstrum
-  dim = 13
-
   # load .pickle file to import parameters
   with open("ex16/mu_sigma_result.pickle", mode="rb") as f:
+
     mu_sigma_result = pickle.load(f)
 
   # load [mu] and [Sigma] of given word
   i = mu_sigma_result[0].index(word)
   mu = mu_sigma_result[1][i]
   Sigma = mu_sigma_result[2][i]
+  sigma2_list = mu_sigma_result[3][i]
 
+  """
   # Calculate probability based on normal distribution
   Sigma_inv = np.linalg.inv(Sigma)
-  expo = - (cepstrum - mu).T * Sigma_inv * (cepstrum - mu) / 2      # exponents
-  print("shpae of expo = {}".format( expo.shape ))
+  expo = - (cepstrum - mu).T @ Sigma_inv @ (cepstrum - mu) / 2      # exponents
+  # print("type of expo = {}".format(type(expo)))
   denom = ((2*np.pi) ** (dim/2)) * (np.linalg.det(Sigma) ** 0.5)    # denominator
 
   p = np.exp(expo) / denom
-  return p
+  print("p = {}".format(p))
+  """
+
+  sigma_list = np.sqrt(sigma2_list)
+  L = - sum( np.log(sigma_list) + (cepstrum - mu)**2 / (2*sigma2_list) )
+
+  print(L)
+
+  return L
