@@ -2,6 +2,7 @@ import matplotlib.pyplot as plt
 import numpy as np
 import librosa
 from chroma_funs import chroma_vector
+from harmony_funs import estimate_harmony
 
 
 # Load sound file
@@ -39,6 +40,10 @@ for i in np.arange(0, len(x)-size_frame, size_shift):
   cv = chroma_vector(fft_spec, freq, nn_range)    # cv : float64 ndarray (length=12)
   chromagram.append(cv)
 
+  # Estimate harmony
+  [type, root] = estimate_harmony(cv)
+  harmony.append(type * 12 + root)
+
 
 # 
 # Draw Figure
@@ -49,13 +54,17 @@ fig = plt.figure()
 # draw chromagram
 ax1 = fig.add_subplot(111)
 ax1.set_xlabel('time [s]')					# x軸のラベルを設定
-ax1.set_ylabel('chroma vector')		# y軸のラベルを設定
+ax1.set_ylabel('note number')		# y軸のラベルを設定
 ax1.imshow(
 	np.flipud(np.array(chromagram).T),		# 画像とみなすために，データを転置して上下反転
 	aspect='auto',
 	interpolation='nearest'
 )
 
+# draw harmony
+ax2 = ax1.twinx()
+ax2.set_ylabel('index of harmony')
+ax2.plot(harmony, c='w')
 
 # show picture and save as .png file
 plt.show()
