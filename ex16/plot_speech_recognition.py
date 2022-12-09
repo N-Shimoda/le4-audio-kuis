@@ -4,19 +4,25 @@ import librosa
 import pickle
 import my_models
 
-# dimention of cepstrum load from learning data
-with open("ex16/mu_sigma_result.pickle", mode="rb") as f:
-  mu_sigma_result = pickle.load(f)
-  dim = mu_sigma_result[4]
-
 # 
-# Step1: Load sound file and parameters
+# Step1: Load parameters and sound file
 #
 
-# load .wav file
+# Parameters
+with open("ex16/mu_sigma_result.pickle", mode="rb") as f:
+
+  mu_sigma_result = pickle.load(f)
+
+  # preference of frame
+  dim = mu_sigma_result[4][0]
+  size_frame = mu_sigma_result[4][1]
+  size_shift = mu_sigma_result[4][2]
+
+  print("preference: {}".format(mu_sigma_result[4]))
+
+# Sound file
 SR = 16000
 x, _ = librosa.load('ex01/catena.wav', sr=SR)
-# x, _ = librosa.load('ex01/separato.wav', sr=SR)
 
 
 #
@@ -26,9 +32,7 @@ x, _ = librosa.load('ex01/catena.wav', sr=SR)
 #
 
 # preference of frame
-size_frame = 512			# 2のべき乗
 hamming_window = np.hamming(size_frame)
-size_shift = SR / 100	# 0.01 秒 (10 msec)
 
 # list for storing results
 spectrogram = []
@@ -68,7 +72,6 @@ for i in np.arange(0, len(x)-size_frame, size_shift):
 #
 # preference of figure
 fig = plt.figure()
-
 duration = len(x)/SR
 
 # draw spectrogram
@@ -92,4 +95,4 @@ plt.title('Spectrogram with speech recognition')
 plt.show()
 
 # save as .png file
-fig.savefig('ex16/fig/spectrogram_with_recognition.png')
+fig.savefig("ex16/fig/spectrogram_with_recognition_ss{}.png".format(int(SR/size_shift)))

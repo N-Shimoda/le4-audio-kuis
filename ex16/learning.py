@@ -7,8 +7,14 @@ import librosa
 import numpy as np
 
 
-# dimention of cepstrum
-dim = 18
+# preference of frame and dimention
+SR = 16000
+
+size_frame = 4096
+size_shift = SR / 100   # 0.01 sec (10 msec)
+hamming_window = np.hamming(size_frame)
+dim = 13
+
 words = ["a", "i", "u", "e", "o"]
 
 
@@ -16,20 +22,14 @@ words = ["a", "i", "u", "e", "o"]
 mu_result = []
 Sigma_result = []
 sigma_elements = []
-result = [words, mu_result, Sigma_result, sigma_elements, dim]
+preference = [dim, size_frame, size_shift]
+result = [words, mu_result, Sigma_result, sigma_elements, preference]
 
 
 for word in words:
 
   # load .wav file
-  SR = 16000
   x, _ =  librosa.load('ex02/' + word + '.wav', sr=SR)
-
-  # preference of frame
-  size_frame = 256
-  hamming_window = np.hamming(size_frame)
-  size_shift = SR / 100   # 0.01 sec (10 msec)
-
 
   # 
   # Step1: `mu`
@@ -89,7 +89,7 @@ for word in words:
 # 
 # Save results in .pickle file
 #
-print("dimention: {}".format(result[4]))
+print("preference: {}".format(result[4]))
 
 with open("ex16/mu_sigma_result.pickle", mode="wb") as f:
 
