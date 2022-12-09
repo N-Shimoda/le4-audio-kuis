@@ -13,7 +13,7 @@ def hz2nn(frequency):
            nn_range       [int list]
   return : chroma vector  [int list]  (length=12)
 """
-def chroma_vector(spectrum, frequencies, nn_range):
+def chroma_vector(spectrum, frequencies):
   # 0 = C, 1 = C#, 2 = D, ..., 11 = B
 	# 12次元のクロマベクトルを作成（ゼロベクトルで初期化）
   cv = np.zeros(12)
@@ -22,7 +22,6 @@ def chroma_vector(spectrum, frequencies, nn_range):
   # クロマベクトルの対応する要素に振幅スペクトルを足しこむ
   for s, f in zip (spectrum , frequencies):
     nn = hz2nn(f)
-    if (nn in nn_range):
-      cv[nn % 12] += np.abs(s)
+    cv[nn % 12] += np.abs(s)
     
   return cv
