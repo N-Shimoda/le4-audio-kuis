@@ -1,8 +1,15 @@
+"""
+  Exercise 20 "Melody Recognition"
+  input  : sound data [.wav]
+  output : pitch of recognized melody shown as a graph [.png]
+"""
+
 import matplotlib.pyplot as plt
 import numpy as np
 import librosa
 from chroma_funs import chroma_vector
-from frequency_funs import estimate_melody_f0
+from melody_funs import estimate_melody_f0, likelihood
+
 
 # Load sound file
 SR = 16000
@@ -43,6 +50,7 @@ for i in np.arange(0, len(x)-size_frame, size_shift):
 
   # Estimate frequency of melody
   melody_f0 = estimate_melody_f0(fft_spec)
+  print("fft_spec: {}".format(len(fft_spec)))
   melody.append(melody_f0)
 
 
