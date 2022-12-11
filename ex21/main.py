@@ -1,5 +1,5 @@
 """
-  Exercise 20 "Melody Recognition (Voice Only)"
+  Exercise 21 "Melody Recognition"
   input  : sound data [.wav]
   output : pitch of recognized melody shown as a graph [.png]
 """
@@ -13,7 +13,7 @@ from melody_funs import estimate_melody_f0
 
 # Load sound file
 SR = 16000
-x, _ = librosa.load('sound/shs-test-man.wav', sr=SR)
+x, _ = librosa.load('sound/kimigayo.wav', sr=SR)
 
 # list for storing results
 # spectrogram = []
