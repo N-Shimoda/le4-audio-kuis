@@ -1,5 +1,6 @@
 import librosa
 import numpy as np
+from nmf_funs import apply_nmf
 
 # 
 # Load sound file
@@ -35,3 +36,5 @@ print(len(spectrum))
 
 #
 # Conduct NMF (Non-negative Matrix Factorizaion) on `spectrum`
+k = 20
+H, U = apply_nmf(spectrum, k)
