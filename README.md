@@ -13,5 +13,3 @@
 ## usage of SOX
 - 録音：`sox -r 16k -b 16 -c 1 -d output.wav trim 0 10`
 - 再生：`sox input.wav -d`
-
-## 演習問題
