@@ -13,7 +13,9 @@ from melody_funs import estimate_melody_f0
 
 # Load sound file
 SR = 16000
-x, _ = librosa.load('sound/kimigayo.wav', sr=SR)
+src_path = 'sound/kimigayo_trim.wav'
+x, _ = librosa.load(src_path, sr=SR)
+print(">> Source file : '{}'".format(src_path))
 
 # list for storing results
 # spectrogram = []
@@ -50,7 +52,7 @@ for i in np.arange(0, len(x)-size_frame, size_shift):
   """
 
   # Estimate frequency of melody
-  nn_range = np.arange(37,60)   # range of note number
+  nn_range = np.arange(36,61,0.1)   # range of note number
   melody_nn, melody_f0 = estimate_melody_f0(nn_range, fft_log_abs_spec, SR)
   melody.append(melody_nn)
 
@@ -69,4 +71,6 @@ ax.grid()
 plt.title('Estimated melody')
 plt.show()
 
-fig.savefig("ex20/fig/estimated_melody.png")
+dst_path = "ex21/fig/estimated_melody_kimigayo.png"
+fig.savefig(dst_path)
+print(">> File written to '{}'".format(dst_path))
