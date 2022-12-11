@@ -8,7 +8,7 @@ import matplotlib.pyplot as plt
 import numpy as np
 import librosa
 from chroma_funs import chroma_vector
-from melody_funs import estimate_melody_f0, likelihood
+from melody_funs import estimate_melody_f0
 
 
 # Load sound file
@@ -16,8 +16,8 @@ SR = 16000
 x, _ = librosa.load('sound/shs-test-man.wav', sr=SR)
 
 # list for storing results
-spectrogram = []
-chromagram = []
+# spectrogram = []
+# chromagram = []
 melody = []
 
 
@@ -40,42 +40,33 @@ for i in np.arange(0, len(x)-size_frame, size_shift):
   # Spectrum
   fft_spec = np.fft.rfft(x_frame * hamming_window)
   fft_log_abs_spec = np.log(np.abs(fft_spec))
-  spectrogram.append(fft_log_abs_spec)
+  # spectrogram.append(fft_log_abs_spec)
 
+  """
   # Chroma vector
   freq = np.linspace(8000/len(fft_spec), 8000, len(fft_spec))
-  nn_range = range(36,61)                         # range of note number
   cv = chroma_vector(fft_spec, freq)    # cv : float64 ndarray (length=12)
   chromagram.append(cv)
+  """
 
   # Estimate frequency of melody
-  melody_f0 = estimate_melody_f0(fft_spec)
-  print("fft_spec: {}".format(len(fft_spec)))
-  melody.append(melody_f0)
+  nn_range = np.arange(37,60)   # range of note number
+  melody_nn, melody_f0 = estimate_melody_f0(nn_range, fft_log_abs_spec, SR)
+  melody.append(melody_nn)
 
 
 # 
 # Draw Figure
 #
+fig, ax = plt.subplots()
 
-# preference
-fig = plt.figure()
+# ax.plot(melody)
+ax.plot(melody)
+ax.set_xlabel('time [s]')
+ax.set_ylabel('melody [Hz]')
+ax.grid()
 
-# draw chromagram
-ax1 = fig.add_subplot(111)
-ax1.set_xlabel('time [s]')					# x軸のラベルを設定
-ax1.set_ylabel('note number')		# y軸のラベルを設定
-ax1.imshow(
-	np.flipud(np.array(chromagram).T),		# 画像とみなすために，データを転置して上下反転
-	aspect='auto',
-	interpolation='nearest'
-)
-
-# draw estimated pitch
-ax2 = ax1.twinx()
-ax2.set_ylabel('f0')
-ax2.plot(melody, c='w')
-
-# show picture and save as .png file
+plt.title('Estimated melody')
 plt.show()
-fig.savefig("ex20/fig/pitch.png")
+
+fig.savefig("ex20/fig/estimated_melody.png")
