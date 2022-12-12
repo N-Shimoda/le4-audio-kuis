@@ -47,11 +47,12 @@ for i in np.arange(0, len(x)-size_frame, size_shift):
 # Tkinterを初期化
 root = tkinter.Tk()
 root.wm_title("EXP4-AUDIO-SAMPLE")
+# root.geometry("1200x800")
 
 # Tkinterのウィジェットを階層的に管理するためにFrameを使用
 # frame1 ... スペクトログラムを表示
 # frame2 ... Scale（スライドバー）とスペクトルを表示
-frame1 = tkinter.Frame(root)
+frame1 = tkinter.Frame(root, bg="beige")
 frame2 = tkinter.Frame(root)
 frame1.pack(side="left")
 frame2.pack(side="right")
