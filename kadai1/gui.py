@@ -15,6 +15,9 @@ import tkinter
 
 # MatplotlibをTkinterで使用するために必要
 from matplotlib.backends.backend_tkagg import FigureCanvasTkAgg, NavigationToolbar2Tk
+from src.melody_funs import estimate_melody_f0
+
+spectrogram, melody = my_function(filename)
 
 size_frame = 4096	# フレームサイズ
 SR = 16000			# サンプリングレート
@@ -31,18 +34,24 @@ hamming_window = np.hamming(size_frame)
 
 # スペクトログラムを保存するlist
 spectrogram = []
+melody = []
 
 # フレーム毎にスペクトルを計算
 for i in np.arange(0, len(x)-size_frame, size_shift):
-	
-	# 該当フレームのデータを取得
-	idx = int(i)	# arangeのインデクスはfloatなのでintに変換
-	x_frame = x[idx : idx+size_frame]
-	
-	# スペクトル
-	fft_spec = np.fft.rfft(x_frame * hamming_window)
-	fft_log_abs_spec = np.log(np.abs(fft_spec))
-	spectrogram.append(fft_log_abs_spec)
+  # 該当フレームのデータを取得
+  idx = int(i)	# arangeのインデクスはfloatなのでintに変換
+  x_frame = x[idx : idx+size_frame]
+  
+  # スペクトル
+  fft_spec = np.fft.rfft(x_frame * hamming_window)
+  fft_log_abs_spec = np.log(np.abs(fft_spec))
+  spectrogram.append(fft_log_abs_spec)
+  
+  # Estimate frequency of melody
+  nn_range = np.arange(36,61,0.1)   # range of note number
+  _, melody_f0 = estimate_melody_f0(nn_range, fft_log_abs_spec, SR)
+  melody.append(melody_f0)
+
 
 # Tkinterを初期化
 root = tkinter.Tk()
@@ -57,18 +66,31 @@ frame2 = tkinter.Frame(root)
 frame1.pack(side="left")
 frame2.pack(side="right")
 
-# まずはスペクトログラムを描画
-fig, ax = plt.subplots()
+
+# 
+# Spectrogram & Melody
+fig = plt.figure()
 canvas = FigureCanvasTkAgg(fig, master=frame1)	# masterに対象とするframeを指定
-plt.xlabel('sec')
-plt.ylabel('frequency [Hz]')
-plt.imshow(
+
+# spectrogram
+ax1 = fig.add_subplot(111)
+ax1.set_xlabel('sec')
+ax1.set_ylabel('frequency [Hz]')
+ax1.imshow(
 	np.flipud(np.array(spectrogram).T),
 	extent=[0, duration, 0, 8000],
 	aspect='auto',
 	interpolation='nearest'
 )
+
+# fundamental frequency (f0)
+ax2 = ax1.twinx()
+ax2.set_ylabel('f0 frequency [Hz]')
+x_data = np.linspace(0, duration, len(melody))
+ax2.plot(x_data, melody, c='y')
+
 canvas.get_tk_widget().pack(side="left")	# 最後にFrameに追加する処理
+
 
 # スライドバーの値が変更されたときに呼び出されるコールバック関数
 # ここで右側のグラフに

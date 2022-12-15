@@ -5,7 +5,7 @@ def removeFrame(event):
 
 # main window
 app = tkinter.Tk()
-app.geometry("400x300")
+# app.geometry("400x300")
 
 frame1 = tkinter.Frame(app, bg="red")
 frame2 = tkinter.Frame(app)
