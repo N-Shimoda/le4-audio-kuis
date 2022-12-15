@@ -1,3 +1,5 @@
+# Same function as ex21
+
 """
   Function to estimate fundamental frequency of a given spectrum
   params : nn_range     (candidates of f0)        [int list]
