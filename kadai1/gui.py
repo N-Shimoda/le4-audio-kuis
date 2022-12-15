@@ -29,7 +29,6 @@ def _tabbar_Cb(v):
   word_index = speech[index]
 
   # Update selected position
-  print(type(v))
   vline.set_xdata(float(v))
   canvas.draw()
   
@@ -86,6 +85,7 @@ ax2.set_ylabel('f0 frequency [Hz]')
 x_data = np.linspace(0, duration, len(melody))
 ax2.plot(x_data, melody, c='y')
 
+# vertical line of selected position
 vline = ax1.axvline(x=0, color='red')
 
 canvas.get_tk_widget().pack()
