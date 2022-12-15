@@ -8,13 +8,12 @@
 #
 
 # ライブラリの読み込み
-import librosa
 import numpy as np
 import matplotlib.pyplot as plt
 import tkinter
 
 # MatplotlibをTkinterで使用するために必要
-from matplotlib.backends.backend_tkagg import FigureCanvasTkAgg, NavigationToolbar2Tk
+from matplotlib.backends.backend_tkagg import FigureCanvasTkAgg
 from src.process import process_data
 
 
@@ -27,7 +26,11 @@ def _tabbar_Cb(v):
   # スライドバーの値からスペクトルのインデクスおよびそのスペクトルを取得
   index = int((len(spectrogram)-1) * (float(v) / duration))
   spectrum = spectrogram[index]
-  word = speech[index]
+  word_index = speech[index]
+
+  # Update spectrogram
+  time = v
+  canvas.draw()
   
   # Update spectrogram
   # 直前のスペクトル描画を削除し，新たなスペクトルを描画
@@ -41,7 +44,8 @@ def _tabbar_Cb(v):
   canvas2.draw()
 
   # Update speech recognition
-  recognized_word = word
+  words = ["あ","い","う","え","お"]
+  label["text"] = words[word_index]
 
 
 #
@@ -81,6 +85,10 @@ ax2.set_ylabel('f0 frequency [Hz]')
 x_data = np.linspace(0, duration, len(melody))
 ax2.plot(x_data, melody, c='y')
 
+# selected position
+time = 0
+ax1.axvline(x=time, color='red')
+
 canvas.get_tk_widget().pack()
 
 
@@ -114,12 +122,17 @@ canvas2.get_tk_widget().pack(side="top")	# "top"は上部方向にウィジェ�
 #
 # Recognized voice
 recognized_word = "あ"
-label = tkinter.Label(frame2, text=recognized_word)
+label = tkinter.Label(
+  frame2,
+  text="母音 : "+recognized_word,
+  fg="red",
+  font=("", 40)
+)
 label.pack()
 
 
 #
 # TkinterのGUI表示を開始
-frame1.pack(side="left")
-frame2.pack(side="right")
+frame1.pack(side="left", expand=True)
+frame2.pack(side="right", expand=True)
 tkinter.mainloop()

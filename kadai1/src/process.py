@@ -4,26 +4,28 @@ import pickle
 from src.melody_funs import estimate_melody_f0
 from src.speech_model import recognize_word
 
-# 
-# Load parameters of speech recognition
-with open("ex16/mu_sigma_result.pickle", mode="rb") as f:
-
-  mu_sigma_result = pickle.load(f)
-
-  # preference of frame
-  dim = mu_sigma_result[4][0]
-  size_frame = mu_sigma_result[4][1]
-  size_shift = mu_sigma_result[4][2]
-
-  print("preference: {}".format(mu_sigma_result[4]))
-
 
 def process_data(filename):
 
+  # 
+  # Load parameters of speech recognition
+  with open("ex16/mu_sigma_result.pickle", mode="rb") as f:
+
+    mu_sigma_result = pickle.load(f)
+
+    # preference of frame
+    dim = mu_sigma_result[4][0]
+    size_frame = mu_sigma_result[4][1]
+    size_shift = mu_sigma_result[4][2]
+
+    print("Load learning data of ex16.")
+    print(">> preference: {}".format(mu_sigma_result[4]))
+
+  
   # preference of frame
-  size_frame = 4096	# フレームサイズ
+  # size_frame = 4096	# フレームサイズ
   SR = 16000			# サンプリングレート
-  size_shift = 16000 / 100	# シフトサイズ = 0.001 秒 (10 msec)
+  # size_shift = 16000 / 100	# シフトサイズ = 0.001 秒 (10 msec)
   hamming_window = np.hamming(size_frame)   # ハミング窓
 
   # 音声ファイルを読み込む

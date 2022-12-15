@@ -13,12 +13,8 @@ def recognize_word(cepstrum):
   p_list = []
   
   for word in words:
-
     p = my_model(cepstrum, word)
     p_list.append(p)
-
-  # print("p_list: {}".format(p_list))
-  # print("len(p_list): {}".format(len(p_list)))
 
   max_p = max(p_list)
   max_index = p_list.index(max_p)
@@ -59,6 +55,6 @@ def my_model(cepstrum, word):
   sigma_list = np.sqrt(sigma2_list)
   L = - sum( np.log(sigma_list) + (cepstrum - mu)**2 / (2*sigma2_list) )
 
-  print(L)
+  # print(L)
 
   return L
