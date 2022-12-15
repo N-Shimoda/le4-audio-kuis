@@ -56,7 +56,7 @@ spectrogram, melody, speech, preference = process_data(filename)
 
 
 # Tkinterを初期化
-root = tkinter.Tk()
+root = tkinter.Tk(bg="white")
 root.wm_title("EXP4-AUDIO-SAMPLE")
 
 #
@@ -104,14 +104,15 @@ scale = tkinter.Scale(
 	orient=tkinter.HORIZONTAL,	# 横方向にスライド
 	length=600,					# 横サイズ
 	width=50,					# 縦サイズ
-	font=("", 20)				# フォントサイズは20pxに設定
+	font=("", 20),				# フォントサイズは20pxに設定
+  bg="white"
 )
 scale.pack()
 
 
 #
 # Frame2
-frame2 = tkinter.Frame(root)
+frame2 = tkinter.Frame(root, bg="white")
 
 # スペクトルを表示する領域を確保
 # ax2, canvs2 を使って上記のコールバック関数でグラフを描画する
@@ -126,6 +127,7 @@ label = tkinter.Label(
   frame2,
   text="母音 : "+recognized_word,
   fg="red",
+  bg="white",
   font=("", 40)
 )
 label.pack()
