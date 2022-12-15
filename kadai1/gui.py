@@ -28,8 +28,9 @@ def _tabbar_Cb(v):
   spectrum = spectrogram[index]
   word_index = speech[index]
 
-  # Update spectrogram
-  time = v
+  # Update selected position
+  print(type(v))
+  vline.set_xdata(float(v))
   canvas.draw()
   
   # Update spectrogram
@@ -85,9 +86,7 @@ ax2.set_ylabel('f0 frequency [Hz]')
 x_data = np.linspace(0, duration, len(melody))
 ax2.plot(x_data, melody, c='y')
 
-# selected position
-time = 0
-ax1.axvline(x=time, color='red')
+vline = ax1.axvline(x=0, color='red')
 
 canvas.get_tk_widget().pack()
 
@@ -100,6 +99,7 @@ scale = tkinter.Scale(
 	from_=0,					# 最小値
 	to=duration,				# 最大値
 	resolution=size_shift/SR,	# 刻み幅
+  variable=0.0,
 	label=u'スペクトルを表示する時間[sec]',
 	orient=tkinter.HORIZONTAL,	# 横方向にスライド
 	length=600,					# 横サイズ
