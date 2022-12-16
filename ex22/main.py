@@ -1,6 +1,7 @@
 import librosa
 import numpy as np
 import matplotlib.pyplot as plt
+import pickle
 from src.nmf_funs import apply_nmf
 
 # 
@@ -36,13 +37,18 @@ for i in np.arange(0, len(x)-size_frame, size_shift):
 
 #
 # Step2: Apply NMF (Non-negative Matrix Factorizaion) to `spectrum`
-k = 3
+k = 2
 epoc = 100
 spectrum_array = np.array(spectrum).T
 H, U = apply_nmf(spectrum_array, k, epoc)
 
 print("H (shape={}):\n{}\n".format(H.shape, H))
 print("U (shape={}):\n{}\n".format(U.shape, U))
+
+# store result in .pickle file
+with open("ex22/cache/results.pickle", mode="wb") as f:
+  result = [H,U]
+  pickle.dump(result, f)
 
 
 #
@@ -59,4 +65,4 @@ ax1.imshow(
 )
 
 plt.show()
-fig.savefig('ex22/fig/nmf_result_epoc={}.png')
+fig.savefig('ex22/fig/nmf_result_epoc={}.png'.format(epoc))

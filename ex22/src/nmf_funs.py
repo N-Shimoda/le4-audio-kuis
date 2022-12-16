@@ -18,8 +18,8 @@ def apply_nmf(spectrum, k, epoc):
     raise Exception("variable k exception")
 
   # initialize H,U
-  H = np.ones((Y.shape[0], k))
-  U = np.ones((k, Y.shape[1]))
+  H = np.random.rand(Y.shape[0], k)
+  U = np.random.rand(k, Y.shape[1])
 
   # learning process
   for i in range(epoc):
@@ -44,16 +44,17 @@ def get_next(Y, H, U):
   for n in range(H.shape[0]):
     for k in range(H.shape[1]):
 
-      denom = sum(U[k] * np.dot(H[n],U))   # denominator
-      num = sum(Y[n] * U[k])              # numerator
+      denom = np.sum( U[k] * np.dot(H[n],U) )   # denominator
+      num = np.sum(Y[n] * U[k])               # numerator
       newH[n][k] = H[n][k] * (num/denom)
 
   # update U
   for k in range(U.shape[0]):
     for m in range(U.shape[1]):
 
-      denom = sum(H.T[k] * np.dot(H,U[:,m]))   # denominator
-      num = sum(Y[:,m] * H[:,k])                # numerator
+      vec = U[:,m].reshape(-1,1)
+      denom = np.sum( np.dot(newH[:,k], np.dot(newH,vec)) )   # denominator
+      num = np.sum(Y[:,m] * newH[:,k])                           # numerator
       newU[k][m] = U[k][m] * (num/denom)
 
   return newH, newU
