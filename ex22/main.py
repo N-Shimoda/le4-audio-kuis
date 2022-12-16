@@ -1,6 +1,7 @@
 import librosa
 import numpy as np
-from nmf_funs import apply_nmf
+import matplotlib.pyplot as plt
+from src.nmf_funs import apply_nmf
 
 # 
 # Load sound file
@@ -11,7 +12,7 @@ print(">> File loaded from '{}'".format(src_path))
 
 
 # 
-# Convert sound data into spectrum
+# Step1: Convert sound data into spectrum
 spectrum = []
 
 # preference of frame
@@ -35,6 +36,19 @@ print(len(spectrum))
 
 
 #
-# Conduct NMF (Non-negative Matrix Factorizaion) on `spectrum`
+# Step2: Apply NMF (Non-negative Matrix Factorizaion) to `spectrum`
 k = 20
 H, U = apply_nmf(spectrum, k)
+
+
+#
+# Step3: Show result [U] as spectrogram
+fig = plt.figure()
+
+ax1 = fig.add_subplot(111)
+ax1.set_xlabel('sec')
+ax1.set_ylabel('elements (K)')
+ax1.plot(U)
+
+fig.show()
+fig.savefig('ex22/fig/nmf_result.png')
