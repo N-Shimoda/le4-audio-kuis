@@ -56,12 +56,18 @@ spectrogram, melody, speech, preference = process_data(filename)
 
 
 # Tkinterを初期化
-root = tkinter.Tk(bg="white")
+root = tkinter.Tk()
 root.wm_title("EXP4-AUDIO-SAMPLE")
 
 #
 # Frame1
 frame1 = tkinter.Frame(root)
+frame2 = tkinter.Frame(root, bg="white")
+frame3 = tkinter.Frame(root, bg="black")
+
+frame1.pack(side="left", fill="both")
+frame2.pack(side="left", fill="both")
+
 
 # 
 # Draw spectrogram & Melody
@@ -112,13 +118,12 @@ scale.pack()
 
 #
 # Frame2
-frame2 = tkinter.Frame(root, bg="white")
 
 # スペクトルを表示する領域を確保
 # ax2, canvs2 を使って上記のコールバック関数でグラフを描画する
 fig2, ax2 = plt.subplots()
 canvas2 = FigureCanvasTkAgg(fig2, master=frame2)
-canvas2.get_tk_widget().pack(side="top")	# "top"は上部方向にウィジェットを積むことを意味する
+canvas2.get_tk_widget().pack()	# "top"は上部方向にウィジェットを積むことを意味する
 
 #
 # Recognized voice
@@ -135,6 +140,4 @@ label.pack()
 
 #
 # TkinterのGUI表示を開始
-frame1.pack(side="left", expand=True)
-frame2.pack(side="right", expand=True)
 tkinter.mainloop()

@@ -9,6 +9,7 @@ app = tkinter.Tk()
 
 frame1 = tkinter.Frame(app, bg="red")
 frame2 = tkinter.Frame(app)
+frame3 = tkinter.Frame(app)
 
 canvas = tkinter.Canvas(
   frame1,
@@ -39,8 +40,24 @@ button2 = tkinter.Button(
 )
 button2.pack()
 
+
+# frame3上にウィジェットを作成
+label3 = tkinter.Label(
+  frame3,
+  text="ラベル3"
+)
+label3.pack()
+
+button3 = tkinter.Button(
+  frame3,
+  text="ボタン3"
+)
+button3.pack()
+
+
 # フレームを配置
-frame1.grid(column=0,row=0)
-frame2.grid(column=1,row=0)
+frame1.pack(side="left")
+frame2.pack(side="left")
+frame3.pack(side="left")
 
 app.mainloop()

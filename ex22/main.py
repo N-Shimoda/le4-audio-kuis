@@ -38,7 +38,7 @@ for i in np.arange(0, len(x)-size_frame, size_shift):
 #
 # Step2: Apply NMF (Non-negative Matrix Factorizaion) to `spectrum`
 k = 2
-epoc = 100
+epoc = 50
 spectrum_array = np.array(spectrum).T
 H, U = apply_nmf(spectrum_array, k, epoc)
 
@@ -55,14 +55,27 @@ with open("ex22/cache/results.pickle", mode="wb") as f:
 # Step3: Show result [U] as spectrogram
 fig = plt.figure()
 
-ax1 = fig.add_subplot(111)
-ax1.set_xlabel('sec')
-ax1.set_ylabel('elements (K)')
+# H
+ax1 = fig.add_subplot(1,2,1)
+ax1.set_xlabel('sound source')
+ax1.set_ylabel('frequency [Hz]')
+#  ax1.plot(H)
 ax1.imshow(
+  np.flipud(H),
+  extent=[0, len(x), 0, 16000/2],
+  aspect='auto',
+	interpolation='nearest'
+)
+
+# U
+ax2 = fig.add_subplot(1,2,2)
+ax2.set_xlabel('sec')
+ax2.set_ylabel('sound source')
+ax2.imshow(
   U,
   aspect='auto',
   interpolation='nearest'
 )
 
 plt.show()
-fig.savefig('ex22/fig/nmf_result_epoc={}.png'.format(epoc))
+fig.savefig('ex22/fig/nmf_result_k={}_epoc={}_.png'.format(k, epoc))
