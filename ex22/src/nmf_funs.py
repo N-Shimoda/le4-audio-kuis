@@ -2,14 +2,16 @@ import numpy as np
 
 """
   Function to apply NMF to given matrix. 
-  params : spectrum (matrix)  [ndarray list]
+  params : spectrum (matrix)  [np.array]
            k                  [int]
+           epoc               [int]
   return : H,U
 """
-def apply_nmf(spectrum, k):
+def apply_nmf(spectrum, k, epoc):
 
   # input array as matrix
-  Y = np.array(spectrum)
+  Y = spectrum
+  print("shape of input array: {}".format(Y.shape))
   
   # verify the value of k
   if k > Y.shape[0] or k > Y.shape[1]:
@@ -20,8 +22,8 @@ def apply_nmf(spectrum, k):
   U = np.ones((k, Y.shape[1]))
 
   # learning process
-  upper = 100
-  for i in range(upper):
+  for i in range(epoc):
+    print("{}th generation".format(i))
     H, U = get_next(Y,H,U)
 
   return H, U
@@ -42,7 +44,7 @@ def get_next(Y, H, U):
   for n in range(H.shape[0]):
     for k in range(H.shape[1]):
 
-      denom = sum(U[k] * sum(H[n]*U.T))   # denominator
+      denom = sum(U[k] * np.dot(H[n],U))   # denominator
       num = sum(Y[n] * U[k])              # numerator
       newH[n][k] = H[n][k] * (num/denom)
 
@@ -50,8 +52,8 @@ def get_next(Y, H, U):
   for k in range(U.shape[0]):
     for m in range(U.shape[1]):
 
-      denom = sum(H.T[k] * sum(H[n]*U.T))   # denominator
-      num = sum(Y[n] * U[k])                # numerator
+      denom = sum(H.T[k] * np.dot(H,U[:,m]))   # denominator
+      num = sum(Y[:,m] * H[:,k])                # numerator
       newU[k][m] = U[k][m] * (num/denom)
 
   return newH, newU

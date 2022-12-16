@@ -6,8 +6,9 @@ from src.nmf_funs import apply_nmf
 # 
 # Load sound file
 SR = 16000
-src_path = 'sound/kimigayo_trim.wav'
+src_path = 'sound/nmf_piano_sample.wav'
 x, _ = librosa.load(src_path, sr=SR)
+duration = len(x)/SR    # file size
 print(">> File loaded from '{}'".format(src_path))
 
 
@@ -32,13 +33,16 @@ for i in np.arange(0, len(x)-size_frame, size_shift):
   fft_abs_spec = np.abs(fft_spec)
   spectrum.append(fft_abs_spec)
 
-print(len(spectrum))
-
 
 #
 # Step2: Apply NMF (Non-negative Matrix Factorizaion) to `spectrum`
-k = 20
-H, U = apply_nmf(spectrum, k)
+k = 3
+epoc = 100
+spectrum_array = np.array(spectrum).T
+H, U = apply_nmf(spectrum_array, k, epoc)
+
+print("H (shape={}):\n{}\n".format(H.shape, H))
+print("U (shape={}):\n{}\n".format(U.shape, U))
 
 
 #
@@ -48,7 +52,11 @@ fig = plt.figure()
 ax1 = fig.add_subplot(111)
 ax1.set_xlabel('sec')
 ax1.set_ylabel('elements (K)')
-ax1.plot(U)
+ax1.imshow(
+  U,
+  aspect='auto',
+  interpolation='nearest'
+)
 
-fig.show()
-fig.savefig('ex22/fig/nmf_result.png')
+plt.show()
+fig.savefig('ex22/fig/nmf_result_epoc={}.png')
