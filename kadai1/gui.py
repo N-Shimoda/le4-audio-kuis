@@ -61,7 +61,7 @@ def _tabbar_Cb(v):
 
 #
 # Process sound data
-filename = 'sound/aiueo.wav'
+filename = 'ex01/catena.wav'
 spectrogram, melody, speech, preference = process_data(filename)
 [SR, size_frame, size_shift, duration] = preference
 
