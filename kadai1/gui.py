@@ -17,6 +17,17 @@ from matplotlib.backends.backend_tkagg import FigureCanvasTkAgg
 from src.process import process_data
 
 
+def onResize(e):
+  # ※ 但し、textウィジェットのwidth,height は文字数指定な点に注意
+  # 設定しているフォントサイズにより大きさは異なります。
+  if e.widget is root:
+    canvas.get_tk_widget().configure(width=e.width//20, height=e.height//20)
+
+
+def _speech_label(word):
+  return "母音 : " + word
+
+
 # スライドバーの値が変更されたときに呼び出されるコールバック関数
 # ここで右側のグラフに
 # vはスライドバーの値
@@ -45,7 +56,7 @@ def _tabbar_Cb(v):
 
   # Update speech recognition
   words = ["あ","い","う","え","お"]
-  label["text"] = words[word_index]
+  label["text"] = _speech_label(words[word_index])
 
 
 #
@@ -57,16 +68,29 @@ spectrogram, melody, speech, preference = process_data(filename)
 
 # Tkinterを初期化
 root = tkinter.Tk()
-root.wm_title("EXP4-AUDIO-SAMPLE")
+root.wm_title("EXP4-AUDIO-GUI")
+# root.bind("<Configure>", onResize)
+root.geometry("800x1200")
+
+frame1 = tkinter.Frame(root)
+frame2 = tkinter.Frame(root)
+frame1.pack(side="left", fill="both")
+frame2.pack(side="left", fill="both")
 
 #
 # Frame1
-frame1 = tkinter.Frame(root)
-frame2 = tkinter.Frame(root, bg="white")
-frame3 = tkinter.Frame(root, bg="black")
+#
 
-frame1.pack(side="left", fill="both")
-frame2.pack(side="left", fill="both")
+#
+# Show filename
+file_label = tkinter.Label(
+  frame1,
+  text=filename,
+  fg="black",
+  bg="white",
+  font=("", 30)
+)
+file_label.pack()
 
 
 # 
@@ -94,11 +118,11 @@ ax2.plot(x_data, melody, c='y')
 # vertical line of selected position
 vline = ax1.axvline(x=0, color='red')
 
-canvas.get_tk_widget().pack()
-
+canvas.get_tk_widget().pack(fill='both', expand=True)
+canvas.get_tk_widget().configure(width=800, height=600)
 
 # 
-# Create slide bar
+# Slide bar
 scale = tkinter.Scale(
 	command=_tabbar_Cb,		# ここにコールバック関数を指定
 	master=frame1,				# 表示するフレーム
@@ -127,10 +151,9 @@ canvas2.get_tk_widget().pack()	# "top"は上部方向にウィジェットを積
 
 #
 # Recognized voice
-recognized_word = "あ"
 label = tkinter.Label(
   frame2,
-  text="母音 : "+recognized_word,
+  text = _speech_label("(未選択)"),
   fg="red",
   bg="white",
   font=("", 40)
