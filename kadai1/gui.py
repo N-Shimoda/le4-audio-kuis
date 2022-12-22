@@ -1,6 +1,7 @@
 import numpy as np
 import matplotlib.pyplot as plt
 import tkinter
+import tkinter.ttk as ttk
 import pyaudio
 import wave
 import threading
@@ -11,7 +12,7 @@ from matplotlib.backends.backend_tkagg import FigureCanvasTkAgg
 from src.process import process_data
 
 
-def onResize(e):
+def _onResize(e):
   # ※ 但し、textウィジェットのwidth,height は文字数指定な点に注意
   # 設定しているフォントサイズにより大きさは異なります。
   if e.widget is root:
@@ -21,40 +22,73 @@ def onResize(e):
 def _press_button_play():
 
   global is_playing
-  global my_thread
+  global my_thread, draw_thread
 
   if not is_playing:
-      is_playing = True
-      my_thread = threading.Thread(target=_play_audio)
-      my_thread.start()
+    is_playing = True
+    my_thread = threading.Thread(target=_play_audio)
+    my_thread.start()
 
 
 def _play_audio():
 
-  try:
-    wf = wave.open(filename, "r")
-  except FileNotFoundError: #ファイルが存在しなかった場合
-    print("[Error 404] No such file or directory: " + filename)
-    return 0
-    
-  # ストリームを開く
-  p = pyaudio.PyAudio()
-  stream = p.open(format=p.get_format_from_width(wf.getsampwidth()),
-                  channels=wf.getnchannels(),
-                  rate=wf.getframerate(),
-                  output=True)
-  # 音声を再生
+  global is_playing, play_pos, play_time
+
   chunk = 1024
+  wf = wave.open(filename, 'rb')  # wf : Wave_read object
+
+  try:
+    wf.setpos(play_pos)
+  except:
+    play_pos = 0
+    wf.rewind()
+
+  p = pyaudio.PyAudio()
+
+  stream = p.open(
+    format = p.get_format_from_width(wf.getsampwidth()),
+    channels = wf.getnchannels(),
+    rate = wf.getframerate(),
+    output = True
+  )
+
   data = wf.readframes(chunk)
-  while data != '':
-    stream.write(data)
+
+  # while data != '' and is_playing:
+  while play_pos < wf.getnframes() and is_playing:  # is_playing to stop playing
+
+    play_time = duration * play_pos/wf.getnframes()
+
+    # play music
+    stream.write(data)  # produce soound
     data = wf.readframes(chunk)
+
+    # update vline of canvas
+    vline.set_xdata(play_time)
+    if (play_pos/1024) % 10 == 0:
+      canvas.draw()
+
+    # update play_pos
+    play_pos += chunk
+
+  is_playing = False
+  stream.stop_stream()
   stream.close()
   p.terminate()
 
 
 def _stop_audio(e):
-  pass
+  
+  global is_playing
+  global my_thread
+  global play_time
+
+  if is_playing:
+    is_playing = False
+    my_thread.join()
+
+    _tabbar_Cb(play_time)
+    scale.set(play_time)
 
 
 def _speech_label(word):
@@ -93,10 +127,11 @@ def _tabbar_Cb(v):
 
 
 # ----- main -----
-
 is_playing = False
 my_thread = None
-
+draw_thread = None
+play_pos = 0
+play_time = 0
 
 # Tkinterを初期化
 root = tkinter.Tk()
@@ -104,17 +139,17 @@ root.wm_title("EXP4-AUDIO-GUI")
 root.geometry("800x1200")
 # root.bind("<Configure>", onResize)
 
-frame0 = tkinter.Frame(root, relief="solid", bd=3)
-frame1 = tkinter.Frame(root, relief="solid", bd=3)
-frame2 = tkinter.Frame(root, relief="solid", bd=3)
+frame0 = tkinter.Frame(root, relief="solid", bd=2)
+frame1 = tkinter.Frame(root, relief="solid", bd=2)
+frame2 = tkinter.Frame(root, relief="solid", bd=2)
 frame0.grid(column=0, row=0, columnspan=2)
 frame1.grid(column=0, row=1, sticky="NS")
 frame2.grid(column=1, row=1)
 
-
 #
 # Process sound data
 filename = tkinter.filedialog.askopenfilename(title='Choose .wav file', initialdir="./")
+# filename = "sound/aiueo.wav"
 basename = os.path.basename(filename)
 spectrogram, melody, speech, preference = process_data(filename)
 [SR, size_frame, size_shift, duration] = preference
@@ -144,9 +179,10 @@ stop_button.bind("<ButtonPress>", _stop_audio)
 file_label = tkinter.Label(
   frame1,
   text=basename,
+  relief="raised",
   fg="black",
   bg="white",
-  font=("", 30)
+  font=("", 20)
 )
 file_label.grid()
 
@@ -200,6 +236,12 @@ scale.grid()
 
 #
 # Frame2
+#
+
+#
+# Update button
+button_update = tkinter.Button(frame2, text="Show spectrogram")
+# button_update.grid()
 
 # スペクトルを表示する領域を確保
 # ax2, canvs2 を使って上記のコールバック関数でグラフを描画する
@@ -215,7 +257,8 @@ label = tkinter.Label(
   text = _speech_label("(未選択)"),
   fg="red",
   bg="white",
-  font=("", 40)
+  font=("", 40),
+  relief="raised"
 )
 label.grid()
 

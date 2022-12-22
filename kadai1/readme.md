@@ -18,3 +18,8 @@
   + `process.py`: Main function to analyze original data.
   + `melody_funs.py`: Functions for estimate fundamental frequency.
   + `speech_model.py`: Functions for speech recognition. Parameters for this module are stored in `ex16/mu_sigma_result.pickle`.
+
+## Reference
+- [PyAudioでの再生停止 (stack overflow)](https://stackoverflow.com/questions/33851107/tkinter-button-calling-function-to-play-wave-with-pyaudio-crashes)
+- [ブログ](https://shizenkarasuzon.hatenablog.com/entry/2018/12/31/145510)
+- [waveのドキュメント](https://docs.python.org/ja/3/library/wave.html#wave.Wave_read.readframes)
