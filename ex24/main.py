@@ -19,7 +19,7 @@ SR = 16000
 x, _ = librosa.load('ex02/a.wav', sr=SR)
 
 # 生成する正弦波の周波数（Hz）
-frequency = 200.0
+frequency = 300
 
 # 生成する正弦波の時間的長さ
 duration = len(x)
@@ -37,7 +37,7 @@ x_changed = x * sin_wave
 x_changed = (x_changed * 32768.0). astype('int16')
 
 # 音声ファイルとして出力する
-filename = 'ex24/out/voice_change.wav'
+filename = 'ex24/out/voice_change_freq={}.wav'.format(frequency)
 scipy.io.wavfile.write(filename , int(SR), x_changed)
 
 
@@ -51,6 +51,7 @@ fft_log_abs_spec = np.log(np.abs(fft_spec))
 # Draw spectrum
 fig = plt.figure()
 
+# spectrum of x_changed
 ax1 = fig.add_subplot(111)
 ax1.set_xlabel('sec')
 ax1.set_ylabel('amplitude')
@@ -60,4 +61,4 @@ x_data = np.fft.rfftfreq(len(x_changed), d=1/SR)
 ax1.plot(x_data, fft_log_abs_spec)
 
 plt.show()
-fig.savefig('ex24/out/result.png')
+fig.savefig('ex24/out/result_freq={}.png'.format(frequency))
