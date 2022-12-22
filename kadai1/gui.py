@@ -1,16 +1,9 @@
-#
-# 計算機科学実験及演習 4「音響信号処理」
-# サンプルソースコード
-#
-# 音声ファイルを読み込みスペクトログラムを表示する
-# その隣に時間を選択するスライドバーと選択した時間に対応したスペクトルを表示する
-# GUIのツールとしてTkinterを使用する
-#
-
-# ライブラリの読み込み
 import numpy as np
 import matplotlib.pyplot as plt
 import tkinter
+import pyaudio
+import wave
+import threading
 
 # MatplotlibをTkinterで使用するために必要
 from matplotlib.backends.backend_tkagg import FigureCanvasTkAgg
@@ -22,6 +15,45 @@ def onResize(e):
   # 設定しているフォントサイズにより大きさは異なります。
   if e.widget is root:
     canvas.get_tk_widget().configure(width=e.width//20, height=e.height//20)
+
+
+def _press_button_play():
+
+  global is_playing
+  global my_thread
+
+  if not is_playing:
+      is_playing = True
+      my_thread = threading.Thread(target=_play_audio)
+      my_thread.start()
+
+
+def _play_audio():
+
+  try:
+    wf = wave.open(filename, "r")
+  except FileNotFoundError: #ファイルが存在しなかった場合
+    print("[Error 404] No such file or directory: " + filename)
+    return 0
+    
+  # ストリームを開く
+  p = pyaudio.PyAudio()
+  stream = p.open(format=p.get_format_from_width(wf.getsampwidth()),
+                  channels=wf.getnchannels(),
+                  rate=wf.getframerate(),
+                  output=True)
+  # 音声を再生
+  chunk = 1024
+  data = wf.readframes(chunk)
+  while data != '':
+    stream.write(data)
+    data = wf.readframes(chunk)
+  stream.close()
+  p.terminate()
+
+
+def _stop_audio(e):
+  pass
 
 
 def _speech_label(word):
@@ -59,23 +91,47 @@ def _tabbar_Cb(v):
   label["text"] = _speech_label(words[word_index])
 
 
+# ----- main -----
 #
 # Process sound data
-filename = 'ex01/catena.wav'
+filename = 'sound/doppler_trim.wav'
 spectrogram, melody, speech, preference = process_data(filename)
 [SR, size_frame, size_shift, duration] = preference
+
+is_playing = False
+my_thread = None
 
 
 # Tkinterを初期化
 root = tkinter.Tk()
+
 root.wm_title("EXP4-AUDIO-GUI")
 # root.bind("<Configure>", onResize)
 root.geometry("800x1200")
 
-frame1 = tkinter.Frame(root)
-frame2 = tkinter.Frame(root)
-frame1.pack(side="left", fill="both")
-frame2.pack(side="left", fill="both")
+frame0 = tkinter.Frame(root, relief="solid", bd=3)
+frame1 = tkinter.Frame(root, relief="solid", bd=3)
+frame2 = tkinter.Frame(root, relief="solid", bd=3)
+frame0.grid(column=0, row=0, columnspan=2)
+frame1.grid(column=0, row=1, sticky="NS")
+frame2.grid(column=1, row=1)
+
+
+#
+# Frame0
+#
+
+play_button = tkinter.Button(frame0, text="PLAY", command=_press_button_play, bg="red")
+play_button.grid(column=0, row=0)
+
+stop_button = tkinter.Button(
+  frame0,
+  text="STOP",
+  bg="gray"
+)
+stop_button.grid(column=1, row=0)
+stop_button.bind("<ButtonPress>", _stop_audio)
+
 
 #
 # Frame1
@@ -90,7 +146,7 @@ file_label = tkinter.Label(
   bg="white",
   font=("", 30)
 )
-file_label.pack()
+file_label.grid()
 
 
 # 
@@ -118,8 +174,8 @@ ax2.plot(x_data, melody, c='y')
 # vertical line of selected position
 vline = ax1.axvline(x=0, color='red')
 
-canvas.get_tk_widget().pack(fill='both', expand=True)
-canvas.get_tk_widget().configure(width=800, height=600)
+canvas.get_tk_widget().grid()
+canvas.get_tk_widget().configure(width=720, height=700)
 
 # 
 # Slide bar
@@ -137,7 +193,7 @@ scale = tkinter.Scale(
 	font=("", 20),				# フォントサイズは20pxに設定
   bg="white"
 )
-scale.pack()
+scale.grid()
 
 
 #
@@ -147,7 +203,8 @@ scale.pack()
 # ax2, canvs2 を使って上記のコールバック関数でグラフを描画する
 fig2, ax2 = plt.subplots()
 canvas2 = FigureCanvasTkAgg(fig2, master=frame2)
-canvas2.get_tk_widget().pack()	# "top"は上部方向にウィジェットを積むことを意味する
+canvas2.get_tk_widget().grid()
+canvas2.get_tk_widget().configure(width=720, height=800)
 
 #
 # Recognized voice
@@ -158,7 +215,7 @@ label = tkinter.Label(
   bg="white",
   font=("", 40)
 )
-label.pack()
+label.grid()
 
 
 #
