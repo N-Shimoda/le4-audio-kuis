@@ -4,6 +4,7 @@ import tkinter
 import pyaudio
 import wave
 import threading
+import os
 
 # MatplotlibをTkinterで使用するために必要
 from matplotlib.backends.backend_tkagg import FigureCanvasTkAgg
@@ -92,11 +93,6 @@ def _tabbar_Cb(v):
 
 
 # ----- main -----
-#
-# Process sound data
-filename = 'sound/doppler_trim.wav'
-spectrogram, melody, speech, preference = process_data(filename)
-[SR, size_frame, size_shift, duration] = preference
 
 is_playing = False
 my_thread = None
@@ -104,10 +100,9 @@ my_thread = None
 
 # Tkinterを初期化
 root = tkinter.Tk()
-
 root.wm_title("EXP4-AUDIO-GUI")
-# root.bind("<Configure>", onResize)
 root.geometry("800x1200")
+# root.bind("<Configure>", onResize)
 
 frame0 = tkinter.Frame(root, relief="solid", bd=3)
 frame1 = tkinter.Frame(root, relief="solid", bd=3)
@@ -118,9 +113,16 @@ frame2.grid(column=1, row=1)
 
 
 #
+# Process sound data
+filename = tkinter.filedialog.askopenfilename(title='Choose .wav file', initialdir="./")
+basename = os.path.basename(filename)
+spectrogram, melody, speech, preference = process_data(filename)
+[SR, size_frame, size_shift, duration] = preference
+
+
+#
 # Frame0
 #
-
 play_button = tkinter.Button(frame0, text="PLAY", command=_press_button_play, bg="red")
 play_button.grid(column=0, row=0)
 
@@ -141,7 +143,7 @@ stop_button.bind("<ButtonPress>", _stop_audio)
 # Show filename
 file_label = tkinter.Label(
   frame1,
-  text=filename,
+  text=basename,
   fg="black",
   bg="white",
   font=("", 30)
