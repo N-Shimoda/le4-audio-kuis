@@ -1,7 +1,6 @@
 import numpy as np
 import matplotlib.pyplot as plt
 import tkinter
-import tkinter.ttk as ttk
 import pyaudio
 import wave
 import threading
