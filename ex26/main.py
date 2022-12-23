@@ -7,7 +7,7 @@ import librosa
 """
   正弦波を生成する関数
   params : sampling_rate ... サンプリングレート
-           frequency ... 生成する正弦波の周波数
+           frequency (f) ... 生成する正弦波の周波数
            duration ... 生成する正弦波の時間的長さ
   return : 2πft
 """
@@ -19,10 +19,8 @@ def generate_sinusoid(sampling_rate, frequency, duration):
 
 
 SR = 16000
+name = 'kimigayo'
 x, _ = librosa.load('sound/kimigayo_trim.wav', sr=SR)
-print(x)
-print(type(x))
-print(len(x))
 
 # 
 D = 1
@@ -33,17 +31,16 @@ frequency = R/f_s
 # 生成する正弦波の時間的長さ
 duration = len(x)
 
-# 正弦波を生成する
-A = 1 + D * generate_sinusoid(SR, frequency, duration/SR)
-
-# 元の音声と正弦波を重ね合わせる
-x_changed = x * A
+# vibrato
+tau_0 = 10
+tau = (tau_0 + D/SR * generate_sinusoid(SR, frequency, duration/SR))
+x_changed = np.roll(x, -tau)
 
 # 値の範囲を[-1.0 ~ +1.0] から [-32768 ~ +32767] へ変換する
 x_changed = (x_changed * 32768.0). astype('int16')
 
 # 音声ファイルとして出力する
-filename = 'ex25/out/kimigayo/wav/changed_freq={}_D={}.wav'.format(frequency, D)
+filename = 'ex25/out/{}/wav/changed_freq={}_D={}.wav'.format(name, frequency, D)
 scipy.io.wavfile.write(filename , int(SR), x_changed)
 
 
@@ -64,4 +61,4 @@ x_data = np.fft.rfftfreq(len(x_changed), d=1/SR)
 ax1.plot(x_data, fft_log_abs_spec)
 
 plt.show()
-fig.savefig('ex25/out/kimigayo/fig/spectrum_freq={}_D={}.png'.format(frequency, D))
+fig.savefig('ex25/out/{}/fig/spectrum_freq={}_D={}.png'.format(name, frequency, D))
