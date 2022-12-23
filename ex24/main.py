@@ -33,7 +33,12 @@ sin_wave = sin_wave * 0.9
 # 元の音声と正弦波を重ね合わせる
 x_changed = x * sin_wave
 
+# Calculate spectrum of 'x_changed'
+fft_spec = np.fft.rfft(x_changed)
+fft_log_abs_spec = np.log(np.abs(fft_spec))
+
 # 値の範囲を[-1.0 ~ +1.0] から [-32768 ~ +32767] へ変換する
+# 16bitで表される数の範囲 (2^15)
 x_changed = (x_changed * 32768.0). astype('int16')
 
 # 音声ファイルとして出力する
@@ -42,9 +47,8 @@ scipy.io.wavfile.write(filename , int(SR), x_changed)
 
 
 #
-# Calculate spectrum of 'x_changed'
-fft_spec = np.fft.rfft(x_changed)
-fft_log_abs_spec = np.log(np.abs(fft_spec))
+
+
 
 
 #

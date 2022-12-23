@@ -20,9 +20,6 @@ def generate_sinusoid(sampling_rate, frequency, duration):
 
 SR = 16000
 x, _ = librosa.load('sound/kimigayo_trim.wav', sr=SR)
-print(x)
-print(type(x))
-print(len(x))
 
 # 
 D = 1
