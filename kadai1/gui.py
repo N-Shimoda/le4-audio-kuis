@@ -11,13 +11,6 @@ from matplotlib.backends.backend_tkagg import FigureCanvasTkAgg
 from src.process import process_data
 
 
-def _onResize(e):
-  # ※ 但し、textウィジェットのwidth,height は文字数指定な点に注意
-  # 設定しているフォントサイズにより大きさは異なります。
-  if e.widget is root:
-    canvas.get_tk_widget().configure(width=e.width//20, height=e.height//20)
-
-
 def _press_button_play():
 
   global is_playing
