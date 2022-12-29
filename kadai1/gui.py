@@ -5,6 +5,7 @@ import pyaudio
 import wave
 import threading
 import os
+import time
 
 # MatplotlibをTkinterで使用するために必要
 from matplotlib.backends.backend_tkagg import FigureCanvasTkAgg
@@ -14,12 +15,14 @@ from src.process import process_data
 def _press_button_play():
 
   global is_playing
-  global my_thread, draw_thread
+  global thread_play, thread_draw
 
   if not is_playing:
     is_playing = True
-    my_thread = threading.Thread(target=_play_audio)
-    my_thread.start()
+    thread_play = threading.Thread(target=_play_audio)
+    thread_draw = threading.Thread(target=_draw_canvas)
+    thread_play.start()
+    thread_draw.start()
 
 
 def _play_audio():
@@ -47,18 +50,13 @@ def _play_audio():
   data = wf.readframes(chunk)
 
   # while data != '' and is_playing:
-  while play_pos < wf.getnframes() and is_playing:  # is_playing to stop playing
+  while is_playing and play_pos < wf.getnframes():  # is_playing to stop playing
 
     play_time = duration * play_pos/wf.getnframes()
 
     # play music
     stream.write(data)  # produce soound
     data = wf.readframes(chunk)
-
-    # update vline of canvas
-    vline.set_xdata(play_time)
-    if (play_pos/1024) % 10 == 0:
-      canvas.draw()
 
     # update play_pos
     play_pos += chunk
@@ -69,17 +67,24 @@ def _play_audio():
   p.terminate()
 
 
+def _draw_canvas():
+
+  global is_playing, play_time
+
+  while is_playing:
+    _tabbar_Cb(play_time)
+
+
 def _stop_audio(e):
   
-  global is_playing
-  global my_thread
-  global play_time
+  global is_playing, play_time
+  global thread_play, thread_draw
 
   if is_playing:
     is_playing = False
-    my_thread.join()
+    thread_play.join()
+    thread_draw.join(timeout=1.0)
 
-    _tabbar_Cb(play_time)
     scale.set(play_time)
 
 
@@ -120,8 +125,8 @@ def _tabbar_Cb(v):
 
 # ----- main -----
 is_playing = False
-my_thread = None
-draw_thread = None
+thread_play = None
+thread_draw = None
 play_pos = 0
 play_time = 0
 
@@ -129,7 +134,6 @@ play_time = 0
 root = tkinter.Tk()
 root.wm_title("EXP4-AUDIO-GUI")
 root.geometry("800x1200")
-# root.bind("<Configure>", onResize)
 
 frame0 = tkinter.Frame(root, relief="solid", bd=2)
 frame1 = tkinter.Frame(root, relief="solid", bd=2)
@@ -141,7 +145,6 @@ frame2.grid(column=1, row=1)
 #
 # Process sound data
 filename = tkinter.filedialog.askopenfilename(title='Choose .wav file', initialdir="./")
-# filename = "sound/aiueo.wav"
 basename = os.path.basename(filename)
 spectrogram, melody, speech, preference = process_data(filename)
 [SR, size_frame, size_shift, duration] = preference
@@ -229,11 +232,6 @@ scale.grid()
 #
 # Frame2
 #
-
-#
-# Update button
-button_update = tkinter.Button(frame2, text="Show spectrogram")
-# button_update.grid()
 
 # スペクトルを表示する領域を確保
 # ax2, canvs2 を使って上記のコールバック関数でグラフを描画する

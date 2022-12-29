@@ -12,12 +12,14 @@
 - 音楽音響信号のコードとその区間を認識し表示する.
 - NMFを用いて，音声と音楽を分離し，選択的に再生する.
 
+
 ## Files & Directories
-- `gui.py`: Toplevel code of gui.
+- `gui.py`: Toplevel
 - `src`
   + `process.py`: Main function to analyze original data.
   + `melody_funs.py`: Functions for estimate fundamental frequency.
-  + `speech_model.py`: Functions for speech recognition. Parameters for this module are stored in `ex16/mu_sigma_result.pickle`.
+  + `speech_model.py`: Functions for speech recognition. Parameters of this module are stored in `ex16/mu_sigma_result.pickle`.
+
 
 ## Reference
 - [PyAudioでの再生停止 (stack overflow)](https://stackoverflow.com/questions/33851107/tkinter-button-calling-function-to-play-wave-with-pyaudio-crashes)
