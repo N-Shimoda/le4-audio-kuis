@@ -5,7 +5,6 @@ import pyaudio
 import wave
 import threading
 import os
-import time
 
 # MatplotlibをTkinterで使用するために必要
 from matplotlib.backends.backend_tkagg import FigureCanvasTkAgg
