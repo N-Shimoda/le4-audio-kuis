@@ -47,11 +47,6 @@ scipy.io.wavfile.write(filename , int(SR), x_changed)
 
 
 #
-
-
-
-
-#
 # Draw spectrum
 fig = plt.figure()
 
