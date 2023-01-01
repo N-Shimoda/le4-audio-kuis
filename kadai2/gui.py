@@ -10,7 +10,7 @@ from src.process import process_data
 # class 'Application' inherits tk.Frame
 class Application(tk.Frame):
 
-  filename = None
+  filename = "/Users/naoki/github/le4-audio-kuis-main/sound/doppler_trim.wav"
   # spectrogram = None
   # melody = None
   # duration = None
@@ -41,7 +41,12 @@ class Application(tk.Frame):
       relief="raised",
       bg=self.top_color
     )
-    self.frame_left = tk.Frame(self, bd=2, relief="raised", bg=self.left_color)
+    self.frame_left = tk.Frame(
+      self,
+      bd=2,
+      relief="raised",
+      bg=self.left_color
+    )
     self.frame_right = tk.Frame(
       self,
       bd=2,
@@ -51,7 +56,7 @@ class Application(tk.Frame):
     )
 
     self.frame_top.pack(side="top", anchor="n", expand=True, fill="x")
-    self.frame_left.pack(side="left", anchor="n", expand=True, fill="both")
+    self.frame_left.pack(side="left", anchor="n", expand=False, fill="both")
     self.frame_right.pack(side="right", anchor="n", expand=True, fill="both")
 
 
@@ -80,7 +85,7 @@ class Application(tk.Frame):
       bg=self.left_color,
       fg="white"
     )
-    label_filename.pack()
+    label_filename.pack(side="left", anchor="center")
 
     # ----- RIGHT frame -----
     if self.filename is not None:
@@ -133,7 +138,7 @@ class Application(tk.Frame):
     # vertical line of selected position
     vline = ax1.axvline(x=0, color='red')
 
-    canvas.get_tk_widget().grid()
+    canvas.get_tk_widget().pack(expand=True, fill="both")
     canvas.get_tk_widget().configure(width=720, height=700)
 
 
