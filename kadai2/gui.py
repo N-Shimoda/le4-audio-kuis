@@ -1,10 +1,14 @@
 import tkinter as tk
 import tkinter.filedialog
+import os
 
 # class 'Application' inherits tk.Frame
 class Application(tk.Frame):
 
+  filename = "/Users/naoki/github/le4-audio-kuis-main/sound/aiueo.wav"
+
   def __init__(self, master=None):
+
     super().__init__(master, width=1200, height=800)
     self["bg"]="black"
     self.pack(expand=True, fill="both")
@@ -32,12 +36,24 @@ class Application(tk.Frame):
 
 
   def create_widgets(self):
+
+    # destroy current objects in each frame
+    frames = [obj for obj in self.winfo_children() if type(obj)==tk.Frame]  # list of frames
+    for frame in frames:
+      children = frame.winfo_children()
+      for obj in children:
+        obj.destroy()
+      
     # Frame TOP
     button_play = tk.Button(self.frame_top, text="Play")
     button_play.pack()
 
     # Frame LEFT
-    label_filename = tk.Label(self.frame_left, text="hoge.wav")
+    if self.filename is not None:
+      basename = os.path.basename(self.filename)
+    else:
+      basename = "(ファイル未選択)"
+    label_filename = tk.Label(self.frame_left, text=basename)
     label_filename.pack()
 
     # Frame RIGHT
@@ -49,13 +65,15 @@ class Application(tk.Frame):
 
 
   def menu_file_open_click(self, event=None):
+
     print("「ファイルを開く」が選択された")
-    filename = tkinter.filedialog.askopenfilename(
+    self.filename = tkinter.filedialog.askopenfilename(
       title='Choose .wav file',
       filetypes=[("wave file", ".wav")],
       initialdir="./"
       )
-    print(filename)
+    print(self.filename)
+    self.create_widgets()
 
 
 # ----- main -----
