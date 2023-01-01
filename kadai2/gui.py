@@ -97,7 +97,7 @@ class Application(tk.Frame):
   def create_menubar(self):
     
     menubar = tk.Menu(self)
-    menu_file = tk.Menu(menubar, tearoff = False)
+    menu_file = tk.Menu(menubar)
     menu_view = tk.Menu(menubar)
     menubar.add_cascade(label="ファイル", menu=menu_file)
     menubar.add_cascade(label="表示", menu=menu_view)
@@ -141,6 +141,15 @@ class Application(tk.Frame):
     canvas.get_tk_widget().pack(expand=True, fill="both")
     canvas.get_tk_widget().configure(width=720, height=700)
 
+    popup_menu = tk.Menu(master=canvas.get_tk_widget())
+    popup_menu.add_command(label="Tremolo")
+    popup_menu.add_command(label="Voice Change")
+    popup_menu.add_command(label="Vibrato")
+    canvas.get_tk_widget().bind(
+      "<Button-2>",
+      lambda e : popup_menu.post(e.x_root, e.y_root)
+    )
+
 
   def _menu_file_open_click(self):
 
@@ -149,6 +158,7 @@ class Application(tk.Frame):
       filetypes=[("wave file", ".wav")],
       initialdir="./"
       )
+    print(self.filename)
     self.create_widgets()
 
 
