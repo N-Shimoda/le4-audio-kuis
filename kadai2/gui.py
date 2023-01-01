@@ -5,10 +5,14 @@ import os
 # class 'Application' inherits tk.Frame
 class Application(tk.Frame):
 
-  filename = "/Users/naoki/github/le4-audio-kuis-main/sound/aiueo.wav"
+  filename = None
+  top_color = "#a5a5a5"
+  left_color = "#575757"
+  right_color = "#2e2e2e"
 
   def __init__(self, master=None):
 
+    # ----- Root frame -----
     super().__init__(master, width=1200, height=800)
     self["bg"]="black"
     self.pack(expand=True, fill="both")
@@ -23,10 +27,10 @@ class Application(tk.Frame):
 
     self.master.config(menu=menubar)
 
-    # Frames
-    self.frame_top = tk.Frame(self, bd=2, relief="raised")
-    self.frame_left = tk.Frame(self, bd=2, relief="raised")
-    self.frame_right = tk.Frame(self, bd=2, relief="raised")
+    # ----- Frames -----
+    self.frame_top = tk.Frame(self, bd=2, relief="raised", bg=self.top_color)
+    self.frame_left = tk.Frame(self, bd=2, relief="raised", bg=self.left_color)
+    self.frame_right = tk.Frame(self, bd=2, relief="raised", bg=self.right_color)
 
     self.frame_top.pack(side="top", anchor="n", expand=True, fill="x")
     self.frame_left.pack(side="left", anchor="s", expand=True, fill="both")
@@ -45,7 +49,7 @@ class Application(tk.Frame):
         obj.destroy()
       
     # Frame TOP
-    button_play = tk.Button(self.frame_top, text="Play")
+    button_play = tk.Button(self.frame_top, text="Play", highlightbackground=self.top_color, fg="#b93e32")
     button_play.pack()
 
     # Frame LEFT
@@ -53,13 +57,15 @@ class Application(tk.Frame):
       basename = os.path.basename(self.filename)
     else:
       basename = "(ファイル未選択)"
-    label_filename = tk.Label(self.frame_left, text=basename)
+    label_filename = tk.Label(self.frame_left, text=basename, bg=self.left_color, fg="white")
     label_filename.pack()
 
     # Frame RIGHT
     label_right = tk.Label(
       self.frame_right,
-      text = "Show waveform or chromagram HERE."
+      text = "Show waveform or chromagram HERE.",
+      fg="white",
+      bg=self.right_color
     )
     label_right.pack()
 
