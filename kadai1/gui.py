@@ -143,7 +143,11 @@ frame2.grid(column=1, row=1)
 
 #
 # Process sound data
-filename = tkinter.filedialog.askopenfilename(title='Choose .wav file', initialdir="./")
+filename = tkinter.filedialog.askopenfilename(
+  title='Choose .wav file',
+  filetypes=["wave file", ".wav"],
+  initialdir="./"
+)
 basename = os.path.basename(filename)
 spectrogram, melody, speech, preference = process_data(filename)
 [SR, size_frame, size_shift, duration] = preference

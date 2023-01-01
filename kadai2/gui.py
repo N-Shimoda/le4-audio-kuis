@@ -1,4 +1,5 @@
 import tkinter as tk
+import tkinter.filedialog
 
 # class 'Application' inherits tk.Frame
 class Application(tk.Frame):
@@ -8,24 +9,24 @@ class Application(tk.Frame):
     self["bg"]="black"
     self.pack(expand=True, fill="both")
 
+    # ----- Menu -----
+    menubar = tk.Menu(self)
+    menu_file = tk.Menu(menubar, tearoff = False)
+
+    menubar.add_cascade(label="ファイル", menu = menu_file)
+    menu_file.add_command(label="開く...", command=self.menu_file_open_click, accelerator="Cmd+O")
+    menu_file.add_command(label="名前をつけて保存", accelerator="Cmd+S")
+
+    self.master.config(menu=menubar)
+
     # Frames
     self.frame_top = tk.Frame(self, bd=2, relief="raised")
     self.frame_left = tk.Frame(self, bd=2, relief="raised")
     self.frame_right = tk.Frame(self, bd=2, relief="raised")
-    """
-    self.frame_top.place(width=self["width"], height=10)
-    self.frame_left.place(width=self["width"]//2, height=self["height"]-10)
-    self.frame_right.place(width=self["width"]//2, height=self["height"]-10)
-    """
+
     self.frame_top.pack(side="top", anchor="n", expand=True, fill="x")
     self.frame_left.pack(side="left", anchor="s", expand=True, fill="both")
     self.frame_right.pack(side="right", anchor="n", expand=True, fill="both")
-    
-    """
-    self.frame_top.grid(column=0, row=0, columnspan=2, sticky="we")
-    self.frame_left.grid(column=0, row=1)
-    self.frame_right.grid(column=1, row=1)
-    """
 
     self.create_widgets()
 
@@ -45,6 +46,16 @@ class Application(tk.Frame):
       text = "Show waveform or chromagram HERE."
     )
     label_right.pack()
+
+
+  def menu_file_open_click(self, event=None):
+    print("「ファイルを開く」が選択された")
+    filename = tkinter.filedialog.askopenfilename(
+      title='Choose .wav file',
+      filetypes=[("wave file", ".wav")],
+      initialdir="./"
+      )
+    print(filename)
 
 
 # ----- main -----
