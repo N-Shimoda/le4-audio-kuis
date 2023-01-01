@@ -15,28 +15,28 @@ class Application(tk.Frame):
     # ----- Root frame -----
     super().__init__(master, width=1200, height=800)
     self["bg"]="black"
+    # master.attributes('-alpha', 0.7)
     self.pack(expand=True, fill="both")
 
-    # ----- Menu -----
-    menubar = tk.Menu(self)
-    menu_file = tk.Menu(menubar, tearoff = False)
+    # ----- Children -----
+    self.create_menubar()
+    self.create_frames()
+    self.create_widgets()
 
-    menubar.add_cascade(label="ファイル", menu = menu_file)
-    menu_file.add_command(label="開く...", command=self.menu_file_open_click, accelerator="Cmd+O")
-    menu_file.add_command(label="名前をつけて保存", accelerator="Cmd+S")
 
-    self.master.config(menu=menubar)
+  def create_frames(self):
 
-    # ----- Frames -----
-    self.frame_top = tk.Frame(self, bd=2, relief="raised", bg=self.top_color)
+    self.frame_top = tk.Frame(
+      self,
+      bd=2, relief="raised",
+      bg=self.top_color
+      )
     self.frame_left = tk.Frame(self, bd=2, relief="raised", bg=self.left_color)
     self.frame_right = tk.Frame(self, bd=2, relief="raised", bg=self.right_color)
 
     self.frame_top.pack(side="top", anchor="n", expand=True, fill="x")
     self.frame_left.pack(side="left", anchor="s", expand=True, fill="both")
     self.frame_right.pack(side="right", anchor="n", expand=True, fill="both")
-
-    self.create_widgets()
 
 
   def create_widgets(self):
@@ -48,11 +48,11 @@ class Application(tk.Frame):
       for obj in children:
         obj.destroy()
       
-    # Frame TOP
+    # ----- TOP frame -----
     button_play = tk.Button(self.frame_top, text="Play", highlightbackground=self.top_color, fg="#b93e32")
     button_play.pack()
 
-    # Frame LEFT
+    # ----- LEFT frame -----
     if self.filename is not None:
       basename = os.path.basename(self.filename)
     else:
@@ -60,7 +60,7 @@ class Application(tk.Frame):
     label_filename = tk.Label(self.frame_left, text=basename, bg=self.left_color, fg="white")
     label_filename.pack()
 
-    # Frame RIGHT
+    # ----- RIGHT frame -----
     label_right = tk.Label(
       self.frame_right,
       text = "Show waveform or chromagram HERE.",
@@ -70,20 +70,44 @@ class Application(tk.Frame):
     label_right.pack()
 
 
-  def menu_file_open_click(self, event=None):
+  def create_menubar(self):
+    
+    menubar = tk.Menu(self)
+    menu_file = tk.Menu(menubar, tearoff = False)
+    menu_view = tk.Menu(menubar)
+    menubar.add_cascade(label="ファイル", menu=menu_file)
+    menubar.add_cascade(label="表示", menu=menu_view)
 
-    print("「ファイルを開く」が選択された")
+    # 'file'
+    menu_file.add_command(label="開く...", command=self._menu_file_open_click, accelerator="Cmd+O")
+    menu_file.add_command(label="名前をつけて保存", accelerator="Cmd+S")
+
+    # 'view'
+    menu_view.add_command(label="全画面表示", command=self._menu_view_fullscreen, accelerator="Cmd+Ctrl+F")
+
+    self.master.config(menu=menubar)
+
+
+  def _menu_file_open_click(self):
+
     self.filename = tkinter.filedialog.askopenfilename(
       title='Choose .wav file',
       filetypes=[("wave file", ".wav")],
       initialdir="./"
       )
-    print(self.filename)
     self.create_widgets()
 
+
+  def _menu_view_fullscreen(self):
+
+    current = self.master.attributes('-fullscreen')
+    self.master.attributes('-fullscreen', not current)
+    
 
 # ----- main -----
 if __name__ == '__main__':
   root = tk.Tk()
+  root.title("My GarageBand")
+  # root.attributes('-alpha', 0.5)
   app = Application(master=root)
   app.mainloop()
