@@ -1,11 +1,20 @@
 import tkinter as tk
 import tkinter.filedialog
+import matplotlib.pyplot as plt
+import numpy as np
 import os
+
+from matplotlib.backends.backend_tkagg import FigureCanvasTkAgg
+from src.process import process_data
 
 # class 'Application' inherits tk.Frame
 class Application(tk.Frame):
 
   filename = None
+  # spectrogram = None
+  # melody = None
+  # duration = None
+
   top_color = "#a5a5a5"
   left_color = "#575757"
   right_color = "#2e2e2e"
@@ -28,14 +37,21 @@ class Application(tk.Frame):
 
     self.frame_top = tk.Frame(
       self,
-      bd=2, relief="raised",
+      bd=2,
+      relief="raised",
       bg=self.top_color
-      )
+    )
     self.frame_left = tk.Frame(self, bd=2, relief="raised", bg=self.left_color)
-    self.frame_right = tk.Frame(self, bd=2, relief="raised", bg=self.right_color)
+    self.frame_right = tk.Frame(
+      self,
+      bd=2,
+      relief="raised",
+      bg=self.right_color,
+      width=200
+    )
 
     self.frame_top.pack(side="top", anchor="n", expand=True, fill="x")
-    self.frame_left.pack(side="left", anchor="s", expand=True, fill="both")
+    self.frame_left.pack(side="left", anchor="n", expand=True, fill="both")
     self.frame_right.pack(side="right", anchor="n", expand=True, fill="both")
 
 
@@ -57,17 +73,20 @@ class Application(tk.Frame):
       basename = os.path.basename(self.filename)
     else:
       basename = "(ファイル未選択)"
-    label_filename = tk.Label(self.frame_left, text=basename, bg=self.left_color, fg="white")
+
+    label_filename = tk.Label(
+      self.frame_left,
+      text=basename,
+      bg=self.left_color,
+      fg="white"
+    )
     label_filename.pack()
 
     # ----- RIGHT frame -----
-    label_right = tk.Label(
-      self.frame_right,
-      text = "Show waveform or chromagram HERE.",
-      fg="white",
-      bg=self.right_color
-    )
-    label_right.pack()
+    if self.filename is not None:
+      spectrogram, melody, speech, preference = process_data(self.filename)
+      duration = preference[3]
+      self._create_plt_canvas(spectrogram, melody, duration)
 
 
   def create_menubar(self):
@@ -86,6 +105,36 @@ class Application(tk.Frame):
     menu_view.add_command(label="全画面表示", command=self._menu_view_fullscreen, accelerator="Cmd+Ctrl+F")
 
     self.master.config(menu=menubar)
+
+
+  def _create_plt_canvas(self, spectrogram, melody, duration):
+
+    # Draw spectrogram & Melody
+    fig = plt.figure()
+    canvas = FigureCanvasTkAgg(fig, master=self.frame_right)	# masterに対象とするframeを指定
+
+    # spectrogram
+    ax1 = fig.add_subplot(111)
+    ax1.set_xlabel('sec')
+    ax1.set_ylabel('frequency [Hz]')
+    ax1.imshow(
+      np.flipud(np.array(spectrogram).T),
+      extent=[0, duration, 0, 8000],
+      aspect='auto',
+      interpolation='nearest'
+    )
+
+    # fundamental frequency (f0)
+    ax2 = ax1.twinx()
+    ax2.set_ylabel('f0 frequency [Hz]')
+    x_data = np.linspace(0, duration, len(melody))
+    ax2.plot(x_data, melody, c='y')
+
+    # vertical line of selected position
+    vline = ax1.axvline(x=0, color='red')
+
+    canvas.get_tk_widget().grid()
+    canvas.get_tk_widget().configure(width=720, height=700)
 
 
   def _menu_file_open_click(self):
