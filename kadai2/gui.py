@@ -19,7 +19,7 @@ class Application(tk.Frame):
   isPlaying = False
   play_pos = None
   duration = None
-  thread_audio = False
+  thread_audio = None
 
   top_color = "#a5a5a5"
   left_color = "#575757"
@@ -98,6 +98,11 @@ class Application(tk.Frame):
       children = frame.winfo_children()
       for obj in children:
         obj.destroy()
+
+    self.isPlaying = False
+    self.play_pos = None
+    self.duration = None
+    self.thread_audio = None
       
     # ----- TOP frame -----
     button_play = tk.Button(
