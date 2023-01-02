@@ -2,16 +2,24 @@ import tkinter as tk
 import tkinter.filedialog
 import matplotlib.pyplot as plt
 import numpy as np
+import threading
 import os
+import wave
+import pyaudio
 
 from matplotlib.backends.backend_tkagg import FigureCanvasTkAgg
 from src.process import process_data
+# from src.audio_play import play_audio
 
 # class 'Application' inherits tk.Frame
 class Application(tk.Frame):
 
-  # filename = "/Users/naoki/github/le4-audio-kuis-main/sound/doppler_trim.wav"
-  filename = None
+  filename = "/Users/naoki/github/le4-audio-kuis-main/sound/doppler_trim.wav"
+  # filename = None
+  isPlaying = False
+  play_pos = None
+  duration = None
+  thread_audio = False
 
   top_color = "#a5a5a5"
   left_color = "#575757"
@@ -36,12 +44,17 @@ class Application(tk.Frame):
     menubar = tk.Menu(self)
     menu_file = tk.Menu(menubar)
     menu_view = tk.Menu(menubar)
+    menu_edit = tk.Menu(menubar)
     menubar.add_cascade(label="ファイル", menu=menu_file)
+    menubar.add_cascade(label="編集", menu=menu_edit)
     menubar.add_cascade(label="表示", menu=menu_view)
-
+    
     # 'file'
-    menu_file.add_command(label="開く...", command=self._menu_file_open_click, accelerator="Cmd+O")
+    menu_file.add_command(label="開く...", command=self._menu_file_open_click, accelerator="Cmd+o")
     menu_file.add_command(label="名前をつけて保存", accelerator="Cmd+S")
+
+    # 'edit'
+    menu_edit.add_command(label="元に戻す", accelerator="Cmd+Z")
 
     # 'view'
     menu_view.add_command(label="全画面表示", command=self._menu_view_fullscreen, accelerator="Cmd+Ctrl+F")
@@ -87,11 +100,17 @@ class Application(tk.Frame):
         obj.destroy()
       
     # ----- TOP frame -----
-    button_play = tk.Button(self.frame_top, text="Play", highlightbackground=self.top_color, fg="#b93e32")
+    button_play = tk.Button(
+      self.frame_top,
+      text="Play",
+      highlightbackground=self.top_color,
+      fg="#b93e32",
+      command=self._press_button_play
+    )
     button_play.pack()
 
     # ----- LEFT frame -----
-    if self.filename is not None:
+    if (self.filename is not None) and (self.filename != ""):
       basename = os.path.basename(self.filename)
     else:
       basename = "(ファイル未選択)"
@@ -107,8 +126,60 @@ class Application(tk.Frame):
     # ----- RIGHT frame -----
     if self.filename is not None:
       spectrogram, melody, speech, preference = process_data(self.filename)
-      duration = preference[3]
-      self._create_plt_canvas(spectrogram, melody, duration)
+      self.duration = preference[3]
+      self._create_plt_canvas(spectrogram, melody, self.duration)
+
+
+  def _press_button_play(self):
+
+    if not self.isPlaying:
+      self.isPlaying = True
+      self.thread_audio = threading.Thread(target=self._play_audio)
+      self.thread_audio.start()
+
+    else:
+      self.isPlaying = False
+      self.thread_audio.join()
+
+
+  def _play_audio(self):
+    
+    chunk = 1024
+    wf = wave.open(self.filename, 'rb')  # wf : Wave_read object
+
+    try:
+      wf.setpos(self.play_pos)
+    except:
+      self.play_pos = 0
+      wf.rewind()
+
+    p = pyaudio.PyAudio()
+
+    stream = p.open(
+      format = p.get_format_from_width(wf.getsampwidth()),
+      channels = wf.getnchannels(),
+      rate = wf.getframerate(),
+      output = True
+    )
+
+    data = wf.readframes(chunk)
+
+    # while data != '' and self.isPlaying:
+    while self.isPlaying and self.play_pos < wf.getnframes():  # isPlaying to stop playing
+
+      play_time = self.duration * self.play_pos/wf.getnframes()
+
+      # play music
+      stream.write(data)  # produce soound
+      data = wf.readframes(chunk)
+
+      # update play_pos
+      self.play_pos += chunk
+
+    self.isPlaying = False
+    stream.stop_stream()
+    stream.close()
+    p.terminate()
 
 
   def _create_plt_canvas(self, spectrogram, melody, duration):
@@ -169,6 +240,7 @@ class Application(tk.Frame):
 
 # ----- main -----
 if __name__ == '__main__':
+
   root = tk.Tk()
   root.title("My GarageBand")
   # root.attributes('-alpha', 0.5)
