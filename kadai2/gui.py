@@ -157,7 +157,7 @@ class Application(tk.Frame):
       title='Choose .wav file',
       filetypes=[("wave file", ".wav")],
       initialdir="./"
-      )
+    )
     print(self.filename)
     self.create_widgets()
 

@@ -1,6 +1,7 @@
 import numpy as np
 import matplotlib.pyplot as plt
 import tkinter
+import tkinter.filedialog
 import pyaudio
 import wave
 import threading
@@ -145,7 +146,7 @@ frame2.grid(column=1, row=1)
 # Process sound data
 filename = tkinter.filedialog.askopenfilename(
   title='Choose .wav file',
-  filetypes=["wave file", ".wav"],
+  filetypes=[("wave file", ".wav")],
   initialdir="./"
 )
 basename = os.path.basename(filename)
