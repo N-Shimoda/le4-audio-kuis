@@ -9,7 +9,7 @@ import pyaudio
 
 from matplotlib.backends.backend_tkagg import FigureCanvasTkAgg
 from src.process import process_data
-# from src.audio_play import play_audio
+
 
 # class 'Application' inherits tk.Frame
 class Application(tk.Frame):
@@ -20,6 +20,7 @@ class Application(tk.Frame):
   play_pos = None
   duration = None
   thread_audio = None
+  wf = None   # wave.Wave_read object
 
   top_color = "#a5a5a5"
   left_color = "#575757"
@@ -134,6 +135,8 @@ class Application(tk.Frame):
       self.duration = preference[3]
       self._create_plt_canvas(spectrogram, melody, self.duration)
 
+      self.wf = wave.open(self.filename, 'rb')  # wf : Wave_read object
+
 
   def _press_button_play(self):
 
@@ -150,33 +153,30 @@ class Application(tk.Frame):
   def _play_audio(self):
     
     chunk = 1024
-    wf = wave.open(self.filename, 'rb')  # wf : Wave_read object
 
     try:
-      wf.setpos(self.play_pos)
+      self.wf.setpos(self.play_pos)
     except:
       self.play_pos = 0
-      wf.rewind()
+      self.wf.rewind()
 
     p = pyaudio.PyAudio()
 
     stream = p.open(
-      format = p.get_format_from_width(wf.getsampwidth()),
-      channels = wf.getnchannels(),
-      rate = wf.getframerate(),
+      format = p.get_format_from_width(self.wf.getsampwidth()),
+      channels = self.wf.getnchannels(),
+      rate = self.wf.getframerate(),
       output = True
     )
 
-    data = wf.readframes(chunk)
-
     # while data != '' and self.isPlaying:
-    while self.isPlaying and self.play_pos < wf.getnframes():  # isPlaying to stop playing
+    while self.isPlaying and self.play_pos < self.wf.getnframes():  # isPlaying to stop playing
 
-      play_time = self.duration * self.play_pos/wf.getnframes()
+      play_time = self.duration * self.play_pos/self.wf.getnframes()
 
       # play music
+      data = self.wf.readframes(chunk)
       stream.write(data)  # produce soound
-      data = wf.readframes(chunk)
 
       # update play_pos
       self.play_pos += chunk
