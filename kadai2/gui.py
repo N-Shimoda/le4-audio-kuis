@@ -248,30 +248,15 @@ class Application(tk.Frame):
 
   def _create_effect_preference(self, mode):
 
-    mode_choice = ["Tremolo", "Voice Change", "Vibrato"]
     print(mode)
 
     sub_window = EffectWindow(master=self)
+    sub_window.set_mode(mode)
     sub_window.open()
 
+    # wait for sub_window to close
     self.wait_window(sub_window)
     print("ダイアログが閉じられた")
-    
-    """
-    '''モーダルダイアログボックスの作成'''
-    dlg_modal = tk.Toplevel(self)
-    dlg_modal.title("Modal Dialog") # ウィンドウタイトル
-    dlg_modal.geometry("300x200")   # ウィンドウサイズ(幅x高さ)
-
-    # モーダルにする設定
-    dlg_modal.grab_set()        # モーダルにする
-    dlg_modal.focus_set()       # フォーカスを新しいウィンドウをへ移す
-    dlg_modal.transient(self.master)   # タスクバーに表示しない
-
-    self.wait_window(dlg_modal)
-    print("ダイアログが閉じられた")
-    """
-    
 
 
   def _menu_file_open_click(self):
@@ -293,20 +278,84 @@ class Application(tk.Frame):
 
 class EffectWindow(tk.Toplevel):
 
+  effect_list = ["Tremolo", "Voice Change", "Vibrato"]
+  mode = None
+
   def __init___(self, master):
-    
     super().__init__(master)
 
 
   def open(self):
 
-    self.title("Modal Dialog") # ウィンドウタイトル
+    # ----- window preference -----
+    self.title(self.mode) # ウィンドウタイトル
     self.geometry("300x200")   # ウィンドウサイズ(幅x高さ)
-
-    # モーダルにする設定
     self.grab_set()        # モーダルにする
     self.focus_set()       # フォーカスを新しいウィンドウをへ移す
     self.transient(self.master)   # タスクバーに表示しない
+
+    # ----- 
+    label = tk.Label(
+      master=self,
+      text=self.mode
+    )
+    label.pack()
+
+    pref_frame = self._create_pref_frame()
+    pref_frame.pack()
+
+    finish_button = tk.Button(
+      master=self,
+      text="完了",
+      command=None
+    )
+    finish_button.pack()
+  
+
+  def set_mode(self, mode):
+    self.mode = mode
+
+  
+  def _create_pref_frame(self):
+
+    pref_list = []
+    
+    if self.mode == "Tremolo":
+      pref_list.extend([['freq', 300]])
+
+    elif self.mode == "Voice Change":
+      pref_list.extend([['D',1], ['R',160000]])
+
+    elif self.mode == "Vibrato":
+      pref_list.extend([['tau_0',10], ['D',160000], ['R',80000]])
+
+    else:
+      raise ValueError("error in _create_pref_frame")
+
+    
+    # ----- exhibit preference -----
+    pref_frame = tk.Frame(
+      master=self,
+      bg="black"
+    )
+
+    for pref in pref_list:
+
+      mini_frame = tk.Frame(pref_frame, relief="raised")
+      mini_frame.pack()
+
+      label = tk.Label(
+        master=mini_frame,
+        text=pref[0]
+      )
+      label.pack(side="left")
+
+      entry = tk.Entry(
+        master=mini_frame
+      )
+      entry.pack(side="left")
+
+    return pref_frame
 
 
 # ----- main -----
