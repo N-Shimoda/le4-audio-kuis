@@ -23,5 +23,5 @@
 
 ## Reference
 - [PyAudioでの再生停止 (stack overflow)](https://stackoverflow.com/questions/33851107/tkinter-button-calling-function-to-play-wave-with-pyaudio-crashes)
-- [ブログ](https://shizenkarasuzon.hatenablog.com/entry/2018/12/31/145510)
+- [ブログ（Pyaudioでwavファイルを再生）](https://shizenkarasuzon.hatenablog.com/entry/2018/12/31/145510)
 - [waveのドキュメント](https://docs.python.org/ja/3/library/wave.html#wave.Wave_read.readframes)
