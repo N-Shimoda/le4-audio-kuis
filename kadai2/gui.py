@@ -134,12 +134,11 @@ class Application(tk.Frame):
 
     # ----- RIGHT frame -----
     if self.filename is not None:
+
       spectrogram, melody, speech, preference = process_data(self.filename)
       self.duration = preference[3]
       self._create_plt_canvas(spectrogram, melody, self.duration)
 
-      # self.x, _ = librosa.load(self.filename, sr=self.SR)
-      # self.x = (self.x * 32768.0).astype('int16')
       self.wf = wave.open(self.filename, 'rb')  # wf : Wave_read object
 
 
@@ -220,24 +219,55 @@ class Application(tk.Frame):
     # vertical line of selected position
     vline = ax1.axvline(x=0, color='red')
 
-
-    # ----- pop-up menu -----
     canvas.get_tk_widget().pack(expand=True, fill="both")
     canvas.get_tk_widget().configure(width=720, height=700)
 
+    # ----- pop-up menu -----
     popup_top = tk.Menu(master=canvas.get_tk_widget())
-    popup_2nd = tk.Menu(popup_top, tearoff=True)
-
+    popup_2nd = tk.Menu(popup_top)
     popup_top.add_cascade(label="エフェクト", menu=popup_2nd)
 
-    popup_2nd.add_command(label="Tremolo")
-    popup_2nd.add_command(label="Voice Change")
-    popup_2nd.add_command(label="Vibrato")
+    popup_2nd.add_command(
+      label="Tremolo",
+      command=(lambda: self._create_effect_preference("Tremolo"))
+    )
+    popup_2nd.add_command(
+      label="Voice Change",
+      command=(lambda: self._create_effect_preference("Voice Change"))
+    )
+    popup_2nd.add_command(
+      label="Vibrato",
+      command=(lambda: self._create_effect_preference("Vibrato"))
+    )
 
     canvas.get_tk_widget().bind(
       "<Button-2>",
       lambda e : popup_top.post(e.x_root, e.y_root)
     )
+
+
+  def _create_effect_preference(self, mode):
+
+    mode_choice = ["Tremolo", "Voice Change", "Vibrato"]
+    print(mode)
+
+    effect_window = EffectWindow(master=self)
+
+    """
+    '''モーダルダイアログボックスの作成'''
+    dlg_modal = tk.Toplevel(self)
+    dlg_modal.title("Modal Dialog") # ウィンドウタイトル
+    dlg_modal.geometry("300x200")   # ウィンドウサイズ(幅x高さ)
+
+    # モーダルにする設定
+    dlg_modal.grab_set()        # モーダルにする
+    dlg_modal.focus_set()       # フォーカスを新しいウィンドウをへ移す
+    dlg_modal.transient(self.master)   # タスクバーに表示しない
+
+    # ダイアログが閉じられるまで待つ  
+    self.wait_window(dlg_modal)
+    print("ダイアログが閉じられた")
+    """
 
 
   def _menu_file_open_click(self):
@@ -255,7 +285,28 @@ class Application(tk.Frame):
 
     current = self.master.attributes('-fullscreen')
     self.master.attributes('-fullscreen', not current)
-    
+
+
+class EffectWindow(tk.Toplevel):
+
+  def __init___(self, master):
+
+    super().__init__(master)
+
+    # dlg_modal = tk.Toplevel(self)
+    self.title("Modal Dialog") # ウィンドウタイトル
+    self.geometry("300x200")   # ウィンドウサイズ(幅x高さ)
+
+    # モーダルにする設定
+    self.grab_set()        # モーダルにする
+    self.focus_set()       # フォーカスを新しいウィンドウをへ移す
+    self.transient(self.master.master)   # タスクバーに表示しない
+
+    print(type(self))
+
+    # ダイアログが閉じられるまで待つ  
+    self.wait_window(self)
+
 
 # ----- main -----
 if __name__ == '__main__':
