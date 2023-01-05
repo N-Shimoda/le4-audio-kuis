@@ -220,6 +220,8 @@ class Application(tk.Frame):
     # vertical line of selected position
     vline = ax1.axvline(x=0, color='red')
 
+
+    # ----- pop-up menu -----
     canvas.get_tk_widget().pack(expand=True, fill="both")
     canvas.get_tk_widget().configure(width=720, height=700)
 
@@ -231,7 +233,7 @@ class Application(tk.Frame):
     popup_2nd.add_command(label="Tremolo")
     popup_2nd.add_command(label="Voice Change")
     popup_2nd.add_command(label="Vibrato")
-    
+
     canvas.get_tk_widget().bind(
       "<Button-2>",
       lambda e : popup_top.post(e.x_root, e.y_root)
