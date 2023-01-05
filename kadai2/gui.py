@@ -5,6 +5,7 @@ import numpy as np
 import threading
 import os
 import wave
+import librosa
 import pyaudio
 
 from matplotlib.backends.backend_tkagg import FigureCanvasTkAgg
@@ -21,6 +22,8 @@ class Application(tk.Frame):
   duration = None
   thread_audio = None
   wf = None   # wave.Wave_read object
+  x = None
+  SR = 16000
 
   top_color = "#a5a5a5"
   left_color = "#575757"
@@ -135,6 +138,8 @@ class Application(tk.Frame):
       self.duration = preference[3]
       self._create_plt_canvas(spectrogram, melody, self.duration)
 
+      # self.x, _ = librosa.load(self.filename, sr=self.SR)
+      # self.x = (self.x * 32768.0).astype('int16')
       self.wf = wave.open(self.filename, 'rb')  # wf : Wave_read object
 
 
@@ -176,6 +181,8 @@ class Application(tk.Frame):
 
       # play music
       data = self.wf.readframes(chunk)
+      # x_array = self.x[self.play_pos : self.play_pos+chunk]
+      # data = np.ndarray.tobytes(x_array)
       stream.write(data)  # produce soound
 
       # update play_pos
@@ -216,13 +223,18 @@ class Application(tk.Frame):
     canvas.get_tk_widget().pack(expand=True, fill="both")
     canvas.get_tk_widget().configure(width=720, height=700)
 
-    popup_menu = tk.Menu(master=canvas.get_tk_widget())
-    popup_menu.add_command(label="Tremolo")
-    popup_menu.add_command(label="Voice Change")
-    popup_menu.add_command(label="Vibrato")
+    popup_top = tk.Menu(master=canvas.get_tk_widget())
+    popup_2nd = tk.Menu(popup_top, tearoff=True)
+
+    popup_top.add_cascade(label="エフェクト", menu=popup_2nd)
+
+    popup_2nd.add_command(label="Tremolo")
+    popup_2nd.add_command(label="Voice Change")
+    popup_2nd.add_command(label="Vibrato")
+    
     canvas.get_tk_widget().bind(
       "<Button-2>",
-      lambda e : popup_menu.post(e.x_root, e.y_root)
+      lambda e : popup_top.post(e.x_root, e.y_root)
     )
 
 
