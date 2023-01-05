@@ -22,8 +22,7 @@ class Application(tk.Frame):
   duration = None
   thread_audio = None
   wf = None   # wave.Wave_read object
-  x = None
-  SR = 16000
+  pref_list = None
 
   top_color = "#a5a5a5"
   left_color = "#575757"
@@ -257,6 +256,7 @@ class Application(tk.Frame):
     # wait for sub_window to close
     self.wait_window(sub_window)
     print("ダイアログが閉じられた")
+    print("pref_list : {}".format(self.pref_list))
 
 
   def _menu_file_open_click(self):
@@ -280,6 +280,7 @@ class EffectWindow(tk.Toplevel):
 
   effect_list = ["Tremolo", "Voice Change", "Vibrato"]
   mode = None
+  pref_list = None
 
   def __init___(self, master):
     super().__init__(master)
@@ -307,7 +308,7 @@ class EffectWindow(tk.Toplevel):
     finish_button = tk.Button(
       master=self,
       text="完了",
-      command=None
+      command=self._finish_button_Cb
     )
     finish_button.pack()
   
@@ -316,6 +317,12 @@ class EffectWindow(tk.Toplevel):
     self.mode = mode
 
   
+  def _finish_button_Cb(self):
+
+    self.master.pref_list = [0,1,2]
+    self.destroy()
+
+
   def _create_pref_frame(self):
 
     pref_list = []
@@ -333,11 +340,8 @@ class EffectWindow(tk.Toplevel):
       raise ValueError("error in _create_pref_frame")
 
     
-    # ----- exhibit preference -----
-    pref_frame = tk.Frame(
-      master=self,
-      bg="black"
-    )
+    # ----- create frame for exhibiting preference -----
+    pref_frame = tk.Frame(master=self)
 
     for pref in pref_list:
 
@@ -356,6 +360,10 @@ class EffectWindow(tk.Toplevel):
       entry.pack(side="left")
 
     return pref_frame
+
+  
+  def _update_params(self):
+    pass
 
 
 # ----- main -----
