@@ -251,8 +251,12 @@ class Application(tk.Frame):
     mode_choice = ["Tremolo", "Voice Change", "Vibrato"]
     print(mode)
 
-    effect_window = EffectWindow(master=self)
+    sub_window = EffectWindow(master=self)
+    sub_window.open()
 
+    self.wait_window(sub_window)
+    print("ダイアログが閉じられた")
+    
     """
     '''モーダルダイアログボックスの作成'''
     dlg_modal = tk.Toplevel(self)
@@ -264,10 +268,10 @@ class Application(tk.Frame):
     dlg_modal.focus_set()       # フォーカスを新しいウィンドウをへ移す
     dlg_modal.transient(self.master)   # タスクバーに表示しない
 
-    # ダイアログが閉じられるまで待つ  
     self.wait_window(dlg_modal)
     print("ダイアログが閉じられた")
     """
+    
 
 
   def _menu_file_open_click(self):
@@ -290,22 +294,19 @@ class Application(tk.Frame):
 class EffectWindow(tk.Toplevel):
 
   def __init___(self, master):
-
+    
     super().__init__(master)
 
-    # dlg_modal = tk.Toplevel(self)
+
+  def open(self):
+
     self.title("Modal Dialog") # ウィンドウタイトル
     self.geometry("300x200")   # ウィンドウサイズ(幅x高さ)
 
     # モーダルにする設定
     self.grab_set()        # モーダルにする
     self.focus_set()       # フォーカスを新しいウィンドウをへ移す
-    self.transient(self.master.master)   # タスクバーに表示しない
-
-    print(type(self))
-
-    # ダイアログが閉じられるまで待つ  
-    self.wait_window(self)
+    self.transient(self.master)   # タスクバーに表示しない
 
 
 # ----- main -----
