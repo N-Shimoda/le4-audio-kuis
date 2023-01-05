@@ -5,11 +5,11 @@ import numpy as np
 import threading
 import os
 import wave
-import librosa
 import pyaudio
 
 from matplotlib.backends.backend_tkagg import FigureCanvasTkAgg
-from src.process import process_data
+from src.process import analyze_sound
+from src.sound_effect import apply_effect
 
 
 # class 'Application' inherits tk.Frame
@@ -134,7 +134,7 @@ class Application(tk.Frame):
     # ----- RIGHT frame -----
     if self.filename is not None:
 
-      spectrogram, melody, speech, preference = process_data(self.filename)
+      spectrogram, melody, speech, preference = analyze_sound(self.filename)
       self.duration = preference[3]
       self._create_plt_canvas(spectrogram, melody, self.duration)
 
@@ -258,6 +258,10 @@ class Application(tk.Frame):
     print("ダイアログが閉じられた")
     print("pref_list : {}".format(self.pref_list))
 
+    # apply sound effect
+    self.filename = apply_effect(self.filename, mode)
+    self.create_widgets()
+
 
   def _menu_file_open_click(self):
 
@@ -276,17 +280,23 @@ class Application(tk.Frame):
     self.master.attributes('-fullscreen', not current)
 
 
+
 class EffectWindow(tk.Toplevel):
 
   effect_list = ["Tremolo", "Voice Change", "Vibrato"]
   mode = None
-  pref_list = None
+  pref_list = []
+  entry_box_list = []
 
   def __init___(self, master):
     super().__init__(master)
 
 
   def open(self):
+
+    # ---- init params -----
+    # self.mode = None
+    self.pref_list = []
 
     # ----- window preference -----
     self.title(self.mode) # ウィンドウタイトル
@@ -319,22 +329,24 @@ class EffectWindow(tk.Toplevel):
   
   def _finish_button_Cb(self):
 
-    self.master.pref_list = [0,1,2]
+    # update parameters
+    for i in range(len(self.pref_list)):
+      self.pref_list[i][1] = self.entry_box_list[i].get()
+
+    self.master.pref_list = self.pref_list
     self.destroy()
 
 
   def _create_pref_frame(self):
-
-    pref_list = []
     
     if self.mode == "Tremolo":
-      pref_list.extend([['freq', 300]])
+      self.pref_list.extend([['freq', 300]])
 
     elif self.mode == "Voice Change":
-      pref_list.extend([['D',1], ['R',160000]])
+      self.pref_list.extend([['D',1], ['R',160000]])
 
     elif self.mode == "Vibrato":
-      pref_list.extend([['tau_0',10], ['D',160000], ['R',80000]])
+      self.pref_list.extend([['tau_0',10], ['D',160000], ['R',80000]])
 
     else:
       raise ValueError("error in _create_pref_frame")
@@ -343,7 +355,7 @@ class EffectWindow(tk.Toplevel):
     # ----- create frame for exhibiting preference -----
     pref_frame = tk.Frame(master=self)
 
-    for pref in pref_list:
+    for pref in self.pref_list:
 
       mini_frame = tk.Frame(pref_frame, relief="raised")
       mini_frame.pack()
@@ -355,9 +367,13 @@ class EffectWindow(tk.Toplevel):
       label.pack(side="left")
 
       entry = tk.Entry(
-        master=mini_frame
+        master=mini_frame,
+        # validate="all",
+        # vcmd=(lambda x : isinstance(x, int), '%P')
       )
       entry.pack(side="left")
+
+      self.entry_box_list.append(entry)
 
     return pref_frame
 

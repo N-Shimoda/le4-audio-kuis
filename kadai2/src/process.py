@@ -1,11 +1,14 @@
 import librosa
 import numpy as np
+import scipy.io.wavfile
+import math
 import pickle
+import os
 from src.melody_funs import estimate_melody_f0
 from src.speech_model import recognize_word
 
 
-def process_data(filename):
+def analyze_sound(filename):
 
   # 
   # Load parameters of speech recognition
