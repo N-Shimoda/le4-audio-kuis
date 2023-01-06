@@ -227,12 +227,12 @@ class Application(tk.Frame):
     popup_top.add_cascade(label="エフェクト", menu=popup_2nd)
 
     popup_2nd.add_command(
-      label="Tremolo",
-      command=(lambda: self._create_effect_preference("Tremolo"))
-    )
-    popup_2nd.add_command(
       label="Voice Change",
       command=(lambda: self._create_effect_preference("Voice Change"))
+    )
+    popup_2nd.add_command(
+      label="Tremolo",
+      command=(lambda: self._create_effect_preference("Tremolo"))
     )
     popup_2nd.add_command(
       label="Vibrato",
@@ -249,28 +249,37 @@ class Application(tk.Frame):
 
     print(mode)
 
+    # create effect window
     sub_window = EffectWindow(master=self)
     sub_window.set_mode(mode)
     sub_window.open()
 
-    # wait for sub_window to close
+    # wait for sub_window to close (parameters are updated here)
     self.wait_window(sub_window)
-    print("ダイアログが閉じられた")
-    print("pref_list : {}".format(self.pref_list))
 
     # apply sound effect
-    self.filename = apply_effect(self.filename, mode)
+    # this function generates output file (.wav) in kadai2/effect-middle
+    if self.pref_list is not None:
+      self.filename = apply_effect(self.filename, mode, self.pref_list)
+
+    # update gui
     self.create_widgets()
 
 
   def _menu_file_open_click(self):
 
+    # stop music player
+    self.isPlaying = False
+
+    # update filename via file dialog
     self.filename = tkinter.filedialog.askopenfilename(
       title='Choose .wav file',
       filetypes=[("wave file", ".wav")],
       initialdir="./"
     )
     print(self.filename)
+
+    # update all widgets
     self.create_widgets()
 
 
@@ -283,7 +292,8 @@ class Application(tk.Frame):
 
 class EffectWindow(tk.Toplevel):
 
-  effect_list = ["Tremolo", "Voice Change", "Vibrato"]
+  effect_list = ["Voice Change", "Tremolo", "Vibrato"]
+  # bg_color = "gray"   # "#1b1b1b"
   mode = None
   pref_list = []
   entry_box_list = []
@@ -295,12 +305,16 @@ class EffectWindow(tk.Toplevel):
   def open(self):
 
     # ---- init params -----
-    # self.mode = None
+    self.entry_box_list = []
     self.pref_list = []
 
     # ----- window preference -----
-    self.title(self.mode) # ウィンドウタイトル
-    self.geometry("300x200")   # ウィンドウサイズ(幅x高さ)
+    self.title("Effect Preference") # ウィンドウタイトル
+    print(self.master.winfo_geometry())
+    x_pos = self.master.winfo_screenmmwidth() // 2
+    y_pos =  self.master.winfo_screenmmheight() // 2
+    self.geometry("300x200+" + str(x_pos) + "+" + str(y_pos))   # ウィンドウサイズ(幅x高さ)
+    # self["bg"] = self.bg_color
     self.grab_set()        # モーダルにする
     self.focus_set()       # フォーカスを新しいウィンドウをへ移す
     self.transient(self.master)   # タスクバーに表示しない
@@ -308,7 +322,8 @@ class EffectWindow(tk.Toplevel):
     # ----- 
     label = tk.Label(
       master=self,
-      text=self.mode
+      text=self.mode,
+      font=("Helvetica", 24)
     )
     label.pack()
 
@@ -331,7 +346,7 @@ class EffectWindow(tk.Toplevel):
 
     # update parameters
     for i in range(len(self.pref_list)):
-      self.pref_list[i][1] = self.entry_box_list[i].get()
+      self.pref_list[i][1] = float( self.entry_box_list[i].get() )
 
     self.master.pref_list = self.pref_list
     self.destroy()
@@ -339,10 +354,11 @@ class EffectWindow(tk.Toplevel):
 
   def _create_pref_frame(self):
     
-    if self.mode == "Tremolo":
+    # ----- default preference ----
+    if self.mode == "Voice Change":
       self.pref_list.extend([['freq', 300]])
 
-    elif self.mode == "Voice Change":
+    elif self.mode == "Tremolo":
       self.pref_list.extend([['D',1], ['R',160000]])
 
     elif self.mode == "Vibrato":
@@ -362,24 +378,26 @@ class EffectWindow(tk.Toplevel):
 
       label = tk.Label(
         master=mini_frame,
-        text=pref[0]
+        text=pref[0],
+        font=("Helvetica", 16)
+        # bg=self.bg_color
       )
       label.pack(side="left")
 
       entry = tk.Entry(
         master=mini_frame,
+        # bg=self.bg_color
         # validate="all",
         # vcmd=(lambda x : isinstance(x, int), '%P')
       )
+      i = self.pref_list.index(pref)
+      entry.insert("end", self.pref_list[i][1])
       entry.pack(side="left")
 
       self.entry_box_list.append(entry)
 
     return pref_frame
 
-  
-  def _update_params(self):
-    pass
 
 
 # ----- main -----

@@ -1,4 +1,4 @@
-# 参考サイト
+# Reading List
 
 ## Tkinter
 ### クラスの利用
