@@ -315,16 +315,21 @@ class EffectWindow(tk.Toplevel):
     self.pref_list = []
 
     # ----- window preference -----
-    self.title("Effect Preference") # ウィンドウタイトル
-    x_pos = self.master.winfo_screenmmwidth() // 2
-    y_pos =  self.master.winfo_screenmmheight() // 2
-    self.geometry("300x200+" + str(x_pos) + "+" + str(y_pos))   # ウィンドウサイズ(幅x高さ)
-    # self["bg"] = self.bg_color
+    self.title("Effect Preference")
+
+    # window size
+    width=300
+    height=200
+    x_pos = self.master.winfo_width()//2 - width//2
+    y_pos =  self.master.winfo_height()//2 - height//2
+    self.geometry("{}x{}+{}+{}".format(width, height, x_pos, y_pos))
+
+    # set as modal window
     self.grab_set()        # モーダルにする
     self.focus_set()       # フォーカスを新しいウィンドウをへ移す
     self.transient(self.master)   # タスクバーに表示しない
 
-    # ----- 
+    # ----- widgets -----
     label = tk.Label(
       master=self,
       text=self.mode,
@@ -341,8 +346,15 @@ class EffectWindow(tk.Toplevel):
       command=self._finish_button_Cb
     )
     finish_button.pack()
-  
 
+    cancel_button = tk.Button(
+      master=self,
+      text="キャンセル",
+      command=self._cancel_button_Cb
+    )
+    cancel_button.pack()
+
+  
   def set_mode(self, mode):
     self.mode = mode
 
@@ -354,6 +366,13 @@ class EffectWindow(tk.Toplevel):
       self.pref_list[i][1] = float( self.entry_box_list[i].get() )
 
     self.master.pref_list = self.pref_list
+    self.destroy()
+
+
+  def _cancel_button_Cb(self):
+
+    # return None as preference
+    self.master.pref_list = None
     self.destroy()
 
 
