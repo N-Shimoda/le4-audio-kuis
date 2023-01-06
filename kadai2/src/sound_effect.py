@@ -14,7 +14,6 @@ import os
 def apply_effect(filename, effect_select, pref_list):
 
   x_changed = None
-  print("pref_list : {}".format(pref_list))
   
   out_dir = "kadai2/effect-middle"
   basename = os.path.basename(filename)

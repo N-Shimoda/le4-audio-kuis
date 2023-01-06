@@ -247,8 +247,6 @@ class Application(tk.Frame):
 
   def _create_effect_preference(self, mode):
 
-    print(mode)
-
     # create effect window
     sub_window = EffectWindow(master=self)
     sub_window.set_mode(mode)
@@ -260,6 +258,8 @@ class Application(tk.Frame):
     # apply sound effect
     # this function generates output file (.wav) in kadai2/effect-middle
     if self.pref_list is not None:
+      print("effect : {}".format(mode))
+      print("preference : {}".format(self.pref_list))
       self.filename = apply_effect(self.filename, mode, self.pref_list)
 
     # update gui
@@ -272,15 +272,16 @@ class Application(tk.Frame):
     self.isPlaying = False
 
     # update filename via file dialog
-    self.filename = tkinter.filedialog.askopenfilename(
+    new_filename = tkinter.filedialog.askopenfilename(
       title='Choose .wav file',
       filetypes=[("wave file", ".wav")],
       initialdir="./"
     )
-    print(self.filename)
 
-    # update all widgets
-    self.create_widgets()
+    # update all widgets if any file was selected
+    if new_filename != "":
+      self.filename = new_filename
+      self.create_widgets()
 
 
   def _menu_view_fullscreen(self):
@@ -310,7 +311,6 @@ class EffectWindow(tk.Toplevel):
 
     # ----- window preference -----
     self.title("Effect Preference") # ウィンドウタイトル
-    print(self.master.winfo_geometry())
     x_pos = self.master.winfo_screenmmwidth() // 2
     y_pos =  self.master.winfo_screenmmheight() // 2
     self.geometry("300x200+" + str(x_pos) + "+" + str(y_pos))   # ウィンドウサイズ(幅x高さ)
