@@ -23,6 +23,7 @@ class Application(tk.Frame):
   thread_audio = None
   wf = None   # wave.Wave_read object
   pref_list = None
+  canvas = None
 
   top_color = "#a5a5a5"
   left_color = "#575757"
@@ -194,9 +195,9 @@ class Application(tk.Frame):
 
   def _create_plt_canvas(self, spectrogram, melody, duration):
 
-    # Draw spectrogram & Melody
+    # ----- spectrogram & melody -----
     fig = plt.figure()
-    canvas = FigureCanvasTkAgg(fig, master=self.frame_right)	# masterに対象とするframeを指定
+    self.canvas = FigureCanvasTkAgg(fig, master=self.frame_right)	# masterに対象とするframeを指定
 
     # spectrogram
     ax1 = fig.add_subplot(111)
@@ -218,11 +219,12 @@ class Application(tk.Frame):
     # vertical line of selected position
     vline = ax1.axvline(x=0, color='red')
 
-    canvas.get_tk_widget().pack(expand=True, fill="both")
-    canvas.get_tk_widget().configure(width=720, height=700)
+    self.canvas.get_tk_widget().pack(expand=True, fill="both")
+    self.canvas.get_tk_widget().configure(width=720, height=700)
+
 
     # ----- pop-up menu -----
-    popup_top = tk.Menu(master=canvas.get_tk_widget())
+    popup_top = tk.Menu(master=self.canvas.get_tk_widget())
     popup_2nd = tk.Menu(popup_top)
     popup_top.add_cascade(label="エフェクト", menu=popup_2nd)
 
@@ -239,7 +241,10 @@ class Application(tk.Frame):
       command=(lambda: self._create_effect_preference("Vibrato"))
     )
 
-    canvas.get_tk_widget().bind(
+
+    # ----- Cursor actions -----
+    # show pop-up menu on Right click
+    self.canvas.get_tk_widget().bind(
       "<Button-2>",
       lambda e : popup_top.post(e.x_root, e.y_root)
     )
