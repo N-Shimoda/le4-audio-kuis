@@ -1,7 +1,7 @@
 name: exp4-audio
 channels:
-  - defaults
   - conda-forge
+  - defaults
 dependencies:
   - _anaconda_depends=2022.05=py38_0
   - aiohttp=3.8.3=py38h6c40b1e_0
@@ -52,9 +52,9 @@ dependencies:
   - brunsli=0.1=h23ab428_0
   - bzip2=1.0.8=h1de35cc_0
   - c-ares=1.18.1=hca72f7f_0
-  - ca-certificates=2022.10.11=hecd8cb5_0
+  - ca-certificates=2022.12.7=h033912b_0
   - cachetools=4.2.2=pyhd3eb1b0_0
-  - certifi=2022.12.7=py38hecd8cb5_0
+  - certifi=2022.12.7=pyhd8ed1ab_0
   - cffi=1.15.1=py38hc55c11b_0
   - cfitsio=3.470=hee0f690_6
   - chardet=4.0.0=py38hecd8cb5_1003
@@ -275,7 +275,7 @@ dependencies:
   - openh264=2.1.1=h8346a28_0
   - openjpeg=2.4.0=h66ea3da_0
   - openpyxl=3.0.10=py38hca72f7f_0
-  - openssl=1.1.1s=hca72f7f_0
+  - openssl=1.1.1s=hfd90126_1
   - packaging=21.3=pyhd3eb1b0_0
   - pandas=1.5.2=py38h07fba90_0
   - pandocfilters=1.5.0=pyhd3eb1b0_0
@@ -321,6 +321,7 @@ dependencies:
   - pycurl=7.45.1=py38h0a4fc7d_0
   - pydispatcher=2.0.5=py38hecd8cb5_2
   - pydocstyle=6.1.1=pyhd3eb1b0_0
+  - pydub=0.25.1=pyhd8ed1ab_0
   - pyerfa=2.0.0=py38h9ed2024_0
   - pyflakes=2.4.0=pyhd3eb1b0_0
   - pygments=2.11.2=pyhd3eb1b0_0
