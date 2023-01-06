@@ -233,7 +233,8 @@ stream = p.open(
 
 # mp3ファイル名
 # ここは各自の音源ファイルに合わせて変更すること
-filename = '/Users/naoki/github/le4-audio-kuis-main/mp3/symphony7.mp3'
+filename = "/Users/naoki/github/le4-audio-kuis-main/mp3/hotaru_no_hikari.mp3"
+# filename = '/Users/naoki/github/le4-audio-kuis-main/mp3/symphony7.mp3'
 # filename = "/Users/naoki/github/le4-audio-kuis-main/wav/kimigayo_trim.wav"
 
 #
