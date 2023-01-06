@@ -1,5 +1,6 @@
 import tkinter as tk
 import tkinter.filedialog
+import tkinter.messagebox
 import matplotlib.pyplot as plt
 import numpy as np
 import threading
@@ -15,8 +16,10 @@ from src.sound_effect import apply_effect
 # class 'Application' inherits tk.Frame
 class Application(tk.Frame):
 
-  filename = "/Users/naoki/github/le4-audio-kuis-main/sound/doppler_trim.wav"
-  # filename = None
+  # filename = "/Users/naoki/github/le4-audio-kuis-main/sound/doppler_trim.wav"
+  filename = None
+  pre_filename = None
+
   isPlaying = False
   play_pos = None
   duration = None
@@ -58,7 +61,7 @@ class Application(tk.Frame):
     menu_file.add_command(label="名前をつけて保存", accelerator="Cmd+S")
 
     # 'edit'
-    menu_edit.add_command(label="元に戻す", accelerator="Cmd+Z")
+    menu_edit.add_command(label="元に戻す", command=self._menu_edit_redo, accelerator="Cmd+Z")
 
     # 'view'
     menu_view.add_command(label="全画面表示", command=self._menu_view_fullscreen, accelerator="Cmd+Ctrl+F")
@@ -225,20 +228,30 @@ class Application(tk.Frame):
 
     # ----- pop-up menu -----
     popup_top = tk.Menu(master=self.canvas.get_tk_widget())
-    popup_2nd = tk.Menu(popup_top)
-    popup_top.add_cascade(label="エフェクト", menu=popup_2nd)
+    popup_effect = tk.Menu(popup_top)
+    popup_edit = tk.Menu(popup_top)
 
-    popup_2nd.add_command(
+    popup_top.add_cascade(label="エフェクト", menu=popup_effect)
+    popup_top.add_cascade(label="編集", menu=popup_edit)
+
+    # Effect menu
+    popup_effect.add_command(
       label="Voice Change",
       command=(lambda: self._create_effect_preference("Voice Change"))
     )
-    popup_2nd.add_command(
+    popup_effect.add_command(
       label="Tremolo",
       command=(lambda: self._create_effect_preference("Tremolo"))
     )
-    popup_2nd.add_command(
+    popup_effect.add_command(
       label="Vibrato",
       command=(lambda: self._create_effect_preference("Vibrato"))
+    )
+
+    # Edit menu
+    popup_edit.add_command(
+      label="元に戻す",
+      command=self._menu_edit_redo
     )
 
 
@@ -265,6 +278,8 @@ class Application(tk.Frame):
     if self.pref_list is not None:
       print("effect : {}".format(mode))
       print("preference : {}".format(self.pref_list))
+
+      self.pre_filename = self.filename
       self.filename = apply_effect(self.filename, mode, self.pref_list)
 
     # update gui
@@ -285,6 +300,7 @@ class Application(tk.Frame):
 
     # update all widgets if any file was selected
     if new_filename != "":
+      self.pre_filename = self.filename
       self.filename = new_filename
       self.create_widgets()
 
@@ -293,6 +309,21 @@ class Application(tk.Frame):
 
     current = self.master.attributes('-fullscreen')
     self.master.attributes('-fullscreen', not current)
+
+  
+  def _menu_edit_redo(self):
+
+    if self.pre_filename is not None:
+
+      self.filename = self.pre_filename
+      self.pre_filename = None
+
+      self.create_widgets()
+
+    else:
+      tkinter.messagebox.showerror("エラー", "編集履歴がありません")
+
+
 
 
 
@@ -380,7 +411,7 @@ class EffectWindow(tk.Toplevel):
     
     # ----- default preference ----
     if self.mode == "Voice Change":
-      self.pref_list.extend([['freq', 300]])
+      self.pref_list.extend([['freq', 120]])
 
     elif self.mode == "Tremolo":
       self.pref_list.extend([['D',1], ['R',160000]])
@@ -404,15 +435,11 @@ class EffectWindow(tk.Toplevel):
         master=mini_frame,
         text=pref[0],
         font=("Helvetica", 16)
-        # bg=self.bg_color
       )
       label.pack(side="left")
 
       entry = tk.Entry(
-        master=mini_frame,
-        # bg=self.bg_color
-        # validate="all",
-        # vcmd=(lambda x : isinstance(x, int), '%P')
+        master=mini_frame
       )
       i = self.pref_list.index(pref)
       entry.insert("end", self.pref_list[i][1])
