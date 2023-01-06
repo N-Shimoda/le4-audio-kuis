@@ -233,7 +233,8 @@ stream = p.open(
 
 # mp3ファイル名
 # ここは各自の音源ファイルに合わせて変更すること
-filename = './mp3/hotaru_no_hikari.mp3'
+filename = '/Users/naoki/github/le4-audio-kuis-main/mp3/symphony7.mp3'
+# filename = "/Users/naoki/github/le4-audio-kuis-main/wav/kimigayo_trim.wav"
 
 #
 # 【注意】なるべく1チャネルの音声を利用すること
@@ -243,6 +244,7 @@ filename = './mp3/hotaru_no_hikari.mp3'
 
 # pydubを使用して音楽ファイルを読み込む
 audio_data = AudioSegment.from_mp3(filename)
+# audio_data = AudioSegment.from_wav(filename)
 
 # 音声ファイルの再生にはpyaudioを使用
 # ここではpyaudioの再生ストリームを作成
