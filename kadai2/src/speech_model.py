@@ -2,7 +2,7 @@ import pickle
 import numpy as np
 
 """
-  Function to 
+  Function to recognize voice of given frame.
   params : x_frame
   return : corresponding value for word
            ([a,i,u,e,o] <--> [0,1,2,3,4])
@@ -23,9 +23,10 @@ def recognize_word(cepstrum):
 
 
 """
-  Function to calculate probability
+  Function to calculate likelihood of word.
+  The more the given "cepstrum" is likely to be the "word", output value becomes greater.
   params : cepstrum,
-           word (a,i,u,e,o)
+           word ("a", "i", "u", "e", or "o")
   return : probability
 """
 def my_model(cepstrum, word):

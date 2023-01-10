@@ -6,6 +6,7 @@ from src.speech_model import recognize_word
 
 
 """
+  Function to analyze sound, and return values that reflects features.
   params : filename of .wav file
   return : spectrogram, melody, speech, preference
 """
@@ -21,11 +22,6 @@ def analyze_sound(filename):
     dim = mu_sigma_result[4][0]
     size_frame = mu_sigma_result[4][1]
     size_shift = mu_sigma_result[4][2]
-
-    """
-    print("Load learning data of ex16.")
-    print(">> preference: {}".format(mu_sigma_result[4]))
-    """
 
   
   # preference of frame

@@ -6,9 +6,10 @@ import os
 
 """
   Function to apply effect to the given .wav file.
-  This function generates output file.
-  params : filename of .wav file
-           effect_select (type str) to choose effect type
+  This function generates output sound file in directory which defined as 'out_dir'.
+  
+  params : filename       (path of .wav file)
+           effect_select  (type str, to choose effect type)
   return : (nothing)
 """
 def apply_effect(filename, effect_select, pref_list):
@@ -38,6 +39,11 @@ def apply_effect(filename, effect_select, pref_list):
   return out_path
 
 
+"""
+  Function to apply voice change
+  params : filename of sound file (.wav)
+  return : x_changed
+"""
 def _apply_voice_change(filename, pref_list):
 
   SR = 16000
@@ -65,6 +71,11 @@ def _apply_voice_change(filename, pref_list):
   return x_changed
 
 
+"""
+  Function to apply tremolo
+  params : filename of sound file (.wav)
+  return : x_changed
+"""
 def _apply_tremolo(filename, pref_list):
 
   SR = 16000
@@ -91,6 +102,7 @@ def _apply_tremolo(filename, pref_list):
 
 
 """
+  Function to apply vibrato
   params : filename of sound file (.wav)
   return : x_changed
 """
@@ -124,11 +136,11 @@ def _apply_vibrato(filename, pref_list):
 
 
 """
-  正弦波を生成する関数
-  params : sampling_rate ... サンプリングレート
-           frequency ... 生成する正弦波の周波数
-           duration ... 生成する正弦波の時間的長さ
-  return : 2πft
+  Function to generate sinusoid wave.
+  params : sampling_rate ... sampling rate
+           frequency     ... frequency of sin wave
+           duration      ... duration of sin wave
+  return : 2πft of given duration
 """
 def _generate_sinusoid(sampling_rate, frequency, duration):
 	sampling_interval = 1.0 / sampling_rate

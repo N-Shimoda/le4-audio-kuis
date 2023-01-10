@@ -325,8 +325,6 @@ class Application(tk.Frame):
 
 
 
-
-
 class EffectWindow(tk.Toplevel):
 
   effect_list = ["Voice Change", "Tremolo", "Vibrato"]
