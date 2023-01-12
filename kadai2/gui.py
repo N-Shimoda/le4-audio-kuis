@@ -37,7 +37,6 @@ class Application(tk.Frame):
     # ----- Root frame -----
     super().__init__(master, width=1200, height=800)
     self["bg"]="black"
-    # master.attributes('-alpha', 0.7)
     self.pack(expand=True, fill="both")
 
     # ----- Children -----
@@ -268,7 +267,7 @@ class Application(tk.Frame):
     # create effect window
     sub_window = EffectWindow(master=self)
     sub_window.set_mode(mode)
-    sub_window.open()
+    sub_window.create_widgets()
 
     # wait for sub_window to close (parameters are updated here)
     self.wait_window(sub_window)
@@ -333,11 +332,7 @@ class EffectWindow(tk.Toplevel):
   pref_list = []
   entry_box_list = []
 
-  def __init___(self, master):
-    super().__init__(master)
-
-
-  def open(self):
+  def create_widgets(self):
 
     # ---- init params -----
     self.entry_box_list = []
@@ -454,6 +449,5 @@ if __name__ == '__main__':
 
   root = tk.Tk()
   root.title("My GarageBand")
-  # root.attributes('-alpha', 0.5)
   app = Application(master=root)
   app.mainloop()
