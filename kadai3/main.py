@@ -8,7 +8,9 @@ class Application(tk.Frame):
 
   left_frame = None
   right_frame = None
-  filename = None
+  filename = "mp3/promenade.mp3"
+  # filename = None
+  FRAME_SIZE = 2048
   
   def __init__(self, master=None):
 

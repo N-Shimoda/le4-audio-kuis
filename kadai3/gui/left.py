@@ -48,9 +48,6 @@ class LeftFrame(tk.Frame):
     # サンプリングレート
     SAMPLING_RATE = 16000
 
-    # フレームサイズ
-    FRAME_SIZE = 2048
-
     # サイズシフト
     SHIFT_SIZE = int(SAMPLING_RATE / 20)	# 今回は0.05秒
 
@@ -64,16 +61,8 @@ class LeftFrame(tk.Frame):
     VOLUME_MIN = -120
     VOLUME_MAX = -10
 
-    """
-    # log10を計算する際、引数が0にならないようにするためにこの値を足す
-    # EPSILON = 1e-10
-
-    # ハミング窓
-    hamming_window = np.hamming(FRAME_SIZE)
-    """
-
     # グラフに表示する縦軸方向のデータ数
-    MAX_NUM_SPECTROGRAM = int(FRAME_SIZE / 2)
+    MAX_NUM_SPECTROGRAM = int(self.master.FRAME_SIZE / 2)
 
     # グラフに表示する横軸方向のデータ数
     NUM_DATA_SHOWN = 100
