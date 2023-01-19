@@ -8,6 +8,7 @@ class Application(tk.Frame):
 
   left_frame = None
   right_frame = None
+  filename = None
   
   def __init__(self, master=None):
 
@@ -33,6 +34,13 @@ class Application(tk.Frame):
 
   def create_frames(self):
 
+    # ----- destroy current frames -----
+    frames = [self.left_frame, self.right_frame]
+    for frame in frames:
+      if frame is not None:
+        frame.destroy()
+
+    # ----- create frames -----
     self.left_frame = LeftFrame(master=self) 
     self.right_frame = RightFrame(master=self)
 
@@ -54,8 +62,8 @@ class Application(tk.Frame):
 
     # update all widgets if any file was selected
     if new_filename != "":
-      self.pre_filename = self.filename
       self.filename = new_filename
+      print(self.filename)
       self.create_frames()
 
 
