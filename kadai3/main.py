@@ -1,6 +1,8 @@
 import tkinter as tk
 import tkinter.filedialog
 
+from gui.left import LeftFrame
+
 class Application(tk.Frame):
 
   left_frame = None
@@ -15,7 +17,7 @@ class Application(tk.Frame):
 
     # ----- Children -----
     self.create_menubar()
-    self.create_widgets()
+    self.create_frames()
 
 
   def create_menubar(self):
@@ -26,7 +28,7 @@ class Application(tk.Frame):
     menu_file.add_command(label="開く...", command=self._menu_file_open, accelerator="Ctrl+o")
 
 
-  def create_widgets(self):
+  def create_frames(self):
 
     self.left_frame = LeftFrame(master=self) 
     self.right_frame = RightFrame(master=self)
@@ -51,15 +53,28 @@ class Application(tk.Frame):
     if new_filename != "":
       self.pre_filename = self.filename
       self.filename = new_filename
-      self.create_widgets()
-
-
-class LeftFrame(tk.Frame):
-  pass
+      self.create_frames()
 
 
 class RightFrame(tk.Frame):
-  pass
+
+  def __init__(self, master=None):
+
+    # ----- Root of left frame -----
+    super().__init__(master)
+    self["bg"]="black"
+    self.pack(expand=True, fill="both")
+
+    # ----- Children -----
+    self.create_frames()
+    self.create_widgets()
+
+
+  def create_frames(self):
+    pass
+
+  def create_widgets(self):
+    pass
 
 
 # ----- main -----
