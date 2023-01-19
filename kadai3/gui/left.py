@@ -1,4 +1,5 @@
 import tkinter as tk
+import tkinter.ttk as ttk
 import numpy as np
 
 # matplotlib
@@ -16,7 +17,6 @@ class LeftFrame(tk.Frame):
 
     # ----- Root of left frame -----
     super().__init__(master)
-    self["bg"]="black"
     self.pack(expand=True, fill="both")
 
     # ----- Children -----
@@ -149,7 +149,14 @@ class LeftFrame(tk.Frame):
 
 
   def create_tabbar(self):
-    pass
+
+    var_scale_ttk = tk.DoubleVar()
+    scale = ttk.Scale(
+      master=self.tabbar_frame,
+      variable=var_scale_ttk,
+      length=200
+    )
+    scale.pack()
 
 
   # matplotlib animation によって呼び出される関数
@@ -166,4 +173,4 @@ class LeftFrame(tk.Frame):
     ax2_sub.set_data(time_x_data, volume_data)
     
     return ax1_sub, ax2_sub
-  """
+  """ 
