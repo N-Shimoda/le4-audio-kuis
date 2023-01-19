@@ -32,15 +32,14 @@ class LeftFrame(tk.Frame):
       bd=2,
       relief="raised"
     )
+    self.draw_frame.pack(expand=True, fill="both")
 
     self.tabbar_frame = tk.Frame(
       master=self,
       bd=2,
       relief="raised"
     )
-
-    self.draw_frame.pack()
-    self.tabbar_frame.pack()
+    self.tabbar_frame.pack(fill="x")
 
 
   def create_canvas(self):
@@ -145,7 +144,7 @@ class LeftFrame(tk.Frame):
 
     # matplotlib を GUI(Tkinter) に追加する
     toolbar = NavigationToolbar2Tk(canvas, self.draw_frame)
-    canvas.get_tk_widget().pack()
+    canvas.get_tk_widget().pack(expand=True, fill="both")
 
 
   def create_tabbar(self):

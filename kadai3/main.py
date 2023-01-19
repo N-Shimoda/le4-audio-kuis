@@ -2,6 +2,7 @@ import tkinter as tk
 import tkinter.filedialog
 
 from gui.left import LeftFrame
+from gui.right import RightFrame
 
 class Application(tk.Frame):
 
@@ -26,6 +27,8 @@ class Application(tk.Frame):
     menu_file = tk.Menu(menubar)
     menubar.add_cascade(label="ファイル", menu=menu_file)
     menu_file.add_command(label="開く...", command=self._menu_file_open, accelerator="Ctrl+o")
+
+    self.master.config(menu=menubar)
 
 
   def create_frames(self):
@@ -54,27 +57,6 @@ class Application(tk.Frame):
       self.pre_filename = self.filename
       self.filename = new_filename
       self.create_frames()
-
-
-class RightFrame(tk.Frame):
-
-  def __init__(self, master=None):
-
-    # ----- Root of left frame -----
-    super().__init__(master)
-    self["bg"]="black"
-    self.pack(expand=True, fill="both")
-
-    # ----- Children -----
-    self.create_frames()
-    self.create_widgets()
-
-
-  def create_frames(self):
-    pass
-
-  def create_widgets(self):
-    pass
 
 
 # ----- main -----
