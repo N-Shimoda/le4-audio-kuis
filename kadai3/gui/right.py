@@ -130,11 +130,9 @@ class RightFrame(tk.Frame):
     # おまけに，再生位置も計算することができる
     for chunk in make_chunks(self.audio_data, size_frame_music):
 
-      """
       # GUIが終了してれば、この関数の処理も終了する
-      if is_gui_running == False:
+      if self.is_playing == False:
         break
-      """
 
       # pyaudioの再生ストリームに切り出した音楽データを流し込む
       # 再生が完了するまで処理はここでブロックされる
@@ -177,5 +175,5 @@ class RightFrame(tk.Frame):
 
         # ２次元配列上で列方向（時間軸方向）に１つずらし（戻し）
         # 最後の列（＝最後の時刻のスペクトルがあった位置）に最新のスペクトルデータを挿入
-        spectrogram_data_music = np.roll(spectrogram_data_music, -1, axis=1)
-        spectrogram_data_music[:, -1] = fft_log_abs_spec
+        self.master.spectrogram_data_music = np.roll(self.master.spectrogram_data_music, -1, axis=1)
+        self.master.spectrogram_data_music[:, -1] = fft_log_abs_spec

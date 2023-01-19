@@ -1,8 +1,9 @@
 import tkinter as tk
 import tkinter.filedialog
-
+import numpy as np
 from gui.left import LeftFrame
 from gui.right import RightFrame
+
 
 class Application(tk.Frame):
 
@@ -10,7 +11,35 @@ class Application(tk.Frame):
   right_frame = None
   filename = "mp3/promenade.mp3"
   # filename = None
+
+  # ----- preference -----
+  SAMPLING_RATE = 16000
   FRAME_SIZE = 2048
+  SHIFT_SIZE = int(SAMPLING_RATE / 20)	# サイズシフト。今回は0.05秒
+
+  # スペクトルをカラー表示する際に色の範囲を正規化するために
+  # スペクトルの最小値と最大値を指定
+  # スペクトルの値がこの範囲を超えると，同じ色になってしまう
+  SPECTRUM_MIN = -5
+  SPECTRUM_MAX = 1
+
+  # 音量を表示する際の値の範囲
+  VOLUME_MIN = -120
+  VOLUME_MAX = -10
+
+  # グラフに表示する縦軸方向のデータ数
+  MAX_NUM_SPECTROGRAM = int(FRAME_SIZE / 2)
+
+  # グラフに表示する横軸方向のデータ数
+  NUM_DATA_SHOWN = 100
+  
+  # 横軸の値のデータ
+  time_x_data = np.linspace(0, NUM_DATA_SHOWN * (SHIFT_SIZE/SAMPLING_RATE), NUM_DATA_SHOWN)
+  # 縦軸の値のデータ
+  freq_y_data = np.linspace(8000/MAX_NUM_SPECTROGRAM, 8000, MAX_NUM_SPECTROGRAM)
+
+  spectrogram_data_music = np.zeros((len(freq_y_data), len(time_x_data)))
+  
   
   def __init__(self, master=None):
 
