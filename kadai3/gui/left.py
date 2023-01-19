@@ -149,6 +149,13 @@ class LeftFrame(tk.Frame):
 
   def create_tabbar(self):
 
+    time_label = ttk.Label(
+      master=self.tabbar_frame,
+      text="3:34 / 4:55",
+      font=("naonao", 16)
+    )
+    time_label.pack(anchor="w")
+
     var_scale_ttk = tk.DoubleVar()
     scale = ttk.Scale(
       master=self.tabbar_frame,
