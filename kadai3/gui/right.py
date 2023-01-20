@@ -106,8 +106,6 @@ class RightFrame(tk.Frame):
       output = True   										# 出力モードに設定
     )
 
-    # 楽曲のデータを格納
-    x_stacked_data_music = np.array([])
 
     # この関数は別スレッドで実行するため
     # メインスレッドで定義した以下の２つの変数を利用できるように global 宣言する
@@ -119,9 +117,6 @@ class RightFrame(tk.Frame):
 
     size_frame_music = 10	# 10ミリ秒毎に読み込む
     idx = 0
-    
-    EPSILON = 1e-10   # log10を計算する際、引数が0にならないようにするためにこの値を足す
-    hamming_window = np.hamming(self.master.FRAME_SIZE)
 
     # make_chunks関数を使用して一定のフレーム毎に音楽ファイルを読み込む
     #
@@ -161,17 +156,17 @@ class RightFrame(tk.Frame):
       #
 
       # 現在のフレームとこれまでに入力されたフレームを連結
-      x_stacked_data_music = np.concatenate([x_stacked_data_music, data_music])
+      self.master.x_stacked_data_music = np.concatenate([self.master.x_stacked_data_music, data_music])
 
       # フレームサイズ分のデータがあれば処理を行う
-      if len(x_stacked_data_music) >= self.master.FRAME_SIZE:
+      if len(self.master.x_stacked_data_music) >= self.master.FRAME_SIZE:
         
         # フレームサイズからはみ出した過去のデータは捨てる
-        x_stacked_data_music = x_stacked_data_music[len(x_stacked_data_music)-self.master.FRAME_SIZE:]
+        self.master.x_stacked_data_music = self.master.x_stacked_data_music[len(self.master.x_stacked_data_music)-self.master.FRAME_SIZE:]
 
         # スペクトルを計算
-        fft_spec = np.fft.rfft(x_stacked_data_music * hamming_window)
-        fft_log_abs_spec = np.log10(np.abs(fft_spec) + EPSILON)[:-1]
+        fft_spec = np.fft.rfft(self.master.x_stacked_data_music * self.master.hamming_window)
+        fft_log_abs_spec = np.log10(np.abs(fft_spec) + self.master.EPSILON)[:-1]
 
         # ２次元配列上で列方向（時間軸方向）に１つずらし（戻し）
         # 最後の列（＝最後の時刻のスペクトルがあった位置）に最新のスペクトルデータを挿入

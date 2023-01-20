@@ -1,6 +1,7 @@
 import tkinter as tk
 import tkinter.filedialog
 import numpy as np
+import pyaudio
 from gui.left import LeftFrame
 from gui.right import RightFrame
 
@@ -27,18 +28,24 @@ class Application(tk.Frame):
   VOLUME_MIN = -120
   VOLUME_MAX = -10
 
-  # グラフに表示する縦軸方向のデータ数
-  MAX_NUM_SPECTROGRAM = int(FRAME_SIZE / 2)
+  # グラフに表示するデータ数
+  MAX_NUM_SPECTROGRAM = int(FRAME_SIZE / 2)   # 縦軸方向
+  NUM_DATA_SHOWN = 100                        # 横軸方向
 
-  # グラフに表示する横軸方向のデータ数
-  NUM_DATA_SHOWN = 100
+  EPSILON = 1e-10   # log10を計算する際、引数が0にならないようにするためにこの値を足す
   
-  # 横軸の値のデータ
+  # 横軸・縦軸の値のデータ
   time_x_data = np.linspace(0, NUM_DATA_SHOWN * (SHIFT_SIZE/SAMPLING_RATE), NUM_DATA_SHOWN)
-  # 縦軸の値のデータ
   freq_y_data = np.linspace(8000/MAX_NUM_SPECTROGRAM, 8000, MAX_NUM_SPECTROGRAM)
 
-  spectrogram_data_music = np.zeros((len(freq_y_data), len(time_x_data)))
+  x_stacked_data = np.array([])
+  x_stacked_data_music = np.array([])
+  spectrogram_data = None
+  spectrogram_data_music = np.zeros((len(freq_y_data), len(time_x_data)))    
+  volume_data = None
+
+  hamming_window = np.hamming(FRAME_SIZE)
+  stream = None
   
   
   def __init__(self, master=None):
@@ -51,6 +58,17 @@ class Application(tk.Frame):
     # ----- Children -----
     self.create_menubar()
     self.create_frames()
+
+    # ----- backend -----
+    p = pyaudio.PyAudio()
+    self.stream = p.open(
+      format = pyaudio.paFloat32,
+      channels = 1,
+      rate = self.SAMPLING_RATE,
+      input = True,						# ここをTrueにするとマイクからの入力になる 
+      frames_per_buffer = self.SHIFT_SIZE,		# シフトサイズ
+      stream_callback = self._input_callback	# ここでした関数がマイク入力の度に呼び出される（frame_per_bufferで指定した単位で）
+    )
 
 
   def create_menubar(self):
@@ -96,6 +114,44 @@ class Application(tk.Frame):
       self.filename = new_filename
       print(self.filename)
       self.create_frames()
+
+  
+  # フレーム毎に呼び出される関数
+  def _input_callback(self, in_data, frame_count, time_info, status_flags):
+    
+    # この関数は別スレッドで実行するため
+    # メインスレッドで定義した以下の２つの numpy array を利用できるように global 宣言する
+    # これらにはフレーム毎のスペクトルと音量のデータが格納される
+    # global x_stacked_data, spectrogram_data, volume_data
+
+    # 現在のフレームの音声データをnumpy arrayに変換
+    x_current_frame = np.frombuffer(in_data, dtype=np.float32)
+
+    # 現在のフレームとこれまでに入力されたフレームを連結
+    self.x_stacked_data = np.concatenate([self.x_stacked_data, x_current_frame])
+
+    # フレームサイズ分のデータがあれば処理を行う
+    if len(self.x_stacked_data) >= self.FRAME_SIZE:
+      
+      # フレームサイズからはみ出した過去のデータは捨てる
+      self.x_stacked_data = self.x_stacked_data[len(self.x_stacked_data)-self.FRAME_SIZE:]
+
+      # スペクトルを計算
+      fft_spec = np.fft.rfft(self.x_stacked_data * self.hamming_window)
+      fft_log_abs_spec = np.log10(np.abs(fft_spec) + self.EPSILON)[:-1]
+
+      # ２次元配列上で列方向（時間軸方向）に１つずらし（戻し）
+      # 最後の列（＝最後の時刻のスペクトルがあった位置）に最新のスペクトルデータを挿入
+      self.spectrogram_data = np.roll(self.spectrogram_data, -1, axis=1)
+      self.spectrogram_data[:, -1] = fft_log_abs_spec
+
+      # 音量も同様の処理
+      vol = 20 * np.log10(np.mean(x_current_frame ** 2) + self.EPSILON)
+      self.volume_data = np.roll(self.volume_data, -1)
+      self.volume_data[-1] = vol
+    
+    # 戻り値は pyaudio の仕様に従うこと
+    return None, pyaudio.paContinue
 
 
 # ----- main -----

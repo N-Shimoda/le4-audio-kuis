@@ -8,10 +8,14 @@ import matplotlib.animation as animation
 from matplotlib.colors import Normalize
 from matplotlib.backends.backend_tkagg import FigureCanvasTkAgg, NavigationToolbar2Tk
 
+
 class LeftFrame(tk.Frame):
 
   draw_frame = None
   tabbar_frame = None
+  ax1_sub = None
+  ax2_sub = None
+  ani = None
 
   def __init__(self, master=None):
 
@@ -50,16 +54,16 @@ class LeftFrame(tk.Frame):
 
     # とりあえず初期値（ゼロ）のスペクトログラムと音量のデータを作成
     # この numpy array にデータが更新されていく
-    spectrogram_data = np.zeros((len(self.master.freq_y_data), len(self.master.time_x_data)))
-    volume_data = np.zeros(len(self.master.time_x_data))
+    self.master.spectrogram_data = np.zeros((len(self.master.freq_y_data), len(self.master.time_x_data)))
+    self.master.volume_data = np.zeros(len(self.master.time_x_data))
 
     # 楽曲のスペクトログラムを格納するデータ（このサンプルでは計算のみ）
-    spectrogram_data_music = np.zeros((len(self.master.freq_y_data), len(self.master.time_x_data)))
+    self.master.spectrogram_data_music = np.zeros((len(self.master.freq_y_data), len(self.master.time_x_data)))
 
     # スペクトログラムを描画する際に横軸と縦軸のデータを行列にしておく必要がある
     # これは下記の matplotlib の pcolormesh の仕様のため
-    X = np.zeros(spectrogram_data.shape)
-    Y = np.zeros(spectrogram_data.shape)
+    X = np.zeros(self.master.spectrogram_data.shape)
+    Y = np.zeros(self.master.spectrogram_data.shape)
     for idx_f, f_v in enumerate(self.master.freq_y_data):
       for idx_t, t_v in enumerate(self.master.time_x_data):
         X[idx_f, idx_t] = t_v
@@ -67,10 +71,10 @@ class LeftFrame(tk.Frame):
 
     # pcolormeshを用いてスペクトログラムを描画
     # 戻り値はデータの更新 & 再描画のために必要
-    ax1_sub = ax1.pcolormesh(
+    self.ax1_sub = ax1.pcolormesh(
       X,
       Y,
-      spectrogram_data,
+      self.master.spectrogram_data,
       shading='nearest',	# 描画スタイル
       cmap='jet',			# カラーマップ
       norm=Normalize(self.master.SPECTRUM_MIN, self.master.SPECTRUM_MAX)	# 値の最小値と最大値を指定して，それに色を合わせる
@@ -81,7 +85,7 @@ class LeftFrame(tk.Frame):
 
     # 音量をプロットする
     # 戻り値はデータの更新 & 再描画のために必要
-    ax2_sub, = ax2.plot(self.master.time_x_data, volume_data, c='y')
+    self.ax2_sub, = ax2.plot(self.master.time_x_data, self.master.volume_data, c='y')
 
     # ラベルの設定
     ax1.set_xlabel('sec')				# x軸のラベルを設定
@@ -91,16 +95,14 @@ class LeftFrame(tk.Frame):
     # 音量を表示する際の値の範囲を設定
     ax2.set_ylim([self.master.VOLUME_MIN, self.master.VOLUME_MAX])
 
-    """
-
     # maplotlib animationを設定
-    ani = animation.FuncAnimation(
+    # if self.ax1_sub is not None:
+    self.ani = animation.FuncAnimation(
       fig,
       self._animate,		# 再描画のために呼び出される関数
-      interval=100,	# 100ミリ秒間隔で再描画を行う（PC環境によって処理が追いつかない場合はこの値を大きくするとよい）
-      blit=True		# blitting処理を行うため描画処理が速くなる
+      interval=100,	    # 100ミリ秒間隔で再描画を行う（PC環境によって処理が追いつかない場合はこの値を大きくするとよい）
+      blit=True		      # blitting処理を行うため描画処理が速くなる
     )
-    """
 
     # matplotlib を GUI(Tkinter) に追加する
     toolbar = NavigationToolbar2Tk(canvas, self.draw_frame)
@@ -128,15 +130,15 @@ class LeftFrame(tk.Frame):
   # matplotlib animation によって呼び出される関数
   # ここでは最新のスペクトログラムと音量のデータを格納する
   # 再描画はmatplotlib animationが行う
-  """
-  def _animate(self, frame_index, ax1_sub, ax2_sub):
+  def _animate(self, frame_index):
 
-    ax1_sub.set_array(spectrogram_data)
+    print("animate")
+
+    self.ax1_sub.set_array(self.master.spectrogram_data)
 
     # この上の処理を下記のようにすれば楽曲のスペクトログラムが表示される
     # ax1_sub.set_array(spectrogram_data_music)
     
-    ax2_sub.set_data(time_x_data, volume_data)
+    self.ax2_sub.set_data(self.master.time_x_data, self.master.volume_data)
     
-    return ax1_sub, ax2_sub
-  """ 
+    return self.ax1_sub, self.ax2_sub

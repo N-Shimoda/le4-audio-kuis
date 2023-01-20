@@ -76,14 +76,14 @@ is_gui_running = False
 # 再描画はmatplotlib animationが行う
 def animate(frame_index):
 
-	ax1_sub.set_array(spectrogram_data)
+  print("animate")
+  ax1_sub.set_array(spectrogram_data)
 
 	# この上の処理を下記のようにすれば楽曲のスペクトログラムが表示される
 	# ax1_sub.set_array(spectrogram_data_music)
-	
-	ax2_sub.set_data(time_x_data, volume_data)
-	
-	return ax1_sub, ax2_sub
+  ax2_sub.set_data(time_x_data, volume_data)
+  
+  return ax1_sub, ax2_sub
 
 # GUIで表示するための処理（Tkinter）
 root = tkinter.Tk()
@@ -122,7 +122,7 @@ ax1_sub = ax1.pcolormesh(
 	Y,
 	spectrogram_data,
 	shading='nearest',	# 描画スタイル
-	cmap='jet',			# カラーマップ
+	cmap='jet',			    # カラーマップ
 	norm=Normalize(SPECTRUM_MIN, SPECTRUM_MAX)	# 値の最小値と最大値を指定して，それに色を合わせる
 )
 
@@ -144,9 +144,9 @@ ax2.set_ylim([VOLUME_MIN, VOLUME_MAX])
 # maplotlib animationを設定
 ani = animation.FuncAnimation(
 	fig,
-	animate,		# 再描画のために呼び出される関数
+	animate,		  # 再描画のために呼び出される関数
 	interval=100,	# 100ミリ秒間隔で再描画を行う（PC環境によって処理が追いつかない場合はこの値を大きくするとよい）
-	blit=True		# blitting処理を行うため描画処理が速くなる
+	blit=True		  # blitting処理を行うため描画処理が速くなる
 )
 
 # matplotlib を GUI(Tkinter) に追加する
