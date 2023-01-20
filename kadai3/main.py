@@ -161,8 +161,9 @@ class Application(tk.Frame):
       self.volume_data = np.roll(self.volume_data, -1)
       self.volume_data[-1] = vol
 
-      nn_range = np.arange(36,61,0.1)   # range of note number
+      nn_range = range(36,60)   # range of note number
       pitch, _ = estimate_melody_f0(nn_range, fft_log_abs_spec, self.SAMPLING_RATE)
+      print(pitch)
       self.pitch_data = np.roll(self.pitch_data, -1)
       self.pitch_data[-1] = pitch
     
