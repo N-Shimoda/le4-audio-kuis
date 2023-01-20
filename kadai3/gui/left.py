@@ -126,6 +126,7 @@ class LeftFrame(tk.Frame):
     )
     self.time_label.pack(anchor="w")
 
+    """
     # scale (tabbar) to show playing time
     var_scale_ttk = tk.DoubleVar()
     scale = ttk.Scale(
@@ -134,6 +135,7 @@ class LeftFrame(tk.Frame):
       length=200
     )
     scale.pack()
+    """
 
 
   # matplotlib animation によって呼び出される関数
