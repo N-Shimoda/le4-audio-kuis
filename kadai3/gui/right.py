@@ -68,6 +68,7 @@ class RightFrame(tk.Frame):
 
   def create_labels(self):
 
+    """
     score_label = ttk.Label(
       master=self.info_frame,
       text="96.00",
@@ -75,6 +76,7 @@ class RightFrame(tk.Frame):
       relief="raised"
     )
     score_label.pack()
+    """
 
     calory_label = ttk.Label(
       master=self.info_frame,
