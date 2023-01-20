@@ -1,5 +1,6 @@
 import tkinter as tk
 import tkinter.filedialog
+import tkinter.messagebox
 import numpy as np
 import pyaudio
 from gui.left import LeftFrame
@@ -57,6 +58,7 @@ class Application(tk.Frame):
   total_time = None       # total time of mp3 [seconds]
   text = None
   calory = 0
+  not_sing_count = 0
 
   
   def __init__(self, master=None):
@@ -162,16 +164,27 @@ class Application(tk.Frame):
       vol = 20 * np.log10(np.mean(x_current_frame ** 2) + self.EPSILON)
       self.volume_data = np.roll(self.volume_data, -1)
       self.volume_data[-1] = vol
-      print(vol)
+      # print(vol)
 
       nn_range = range(36,60)   # range of note number
       pitch, _ = estimate_melody_f0(nn_range, fft_log_abs_spec, self.SAMPLING_RATE)
       self.pitch_data = np.roll(self.pitch_data, -1)
       self.pitch_data[-1] = pitch % 12
 
-      # update calory
-      if vol > -50:
+      
+      if vol > -45:
+        # update calory
         self.calory += self._volume2calory(vol)
+        self.not_sing_count = 0
+
+      else:
+        # delete current pitch
+        self.pitch_data[-1] = 0
+        self.not_sing_count += 1
+
+      if self.not_sing_count > 1000:
+        tkinter.messagebox.showinfo("Warning", "Please sing.")
+        self.not_sing_count = 0
     
     # 戻り値は pyaudio の仕様に従うこと
     return None, pyaudio.paContinue
@@ -180,9 +193,8 @@ class Application(tk.Frame):
   def _volume2calory(self, vol):
     
     range = self.VOLUME_MAX - self.VOLUME_MIN
-    alpha = 0.00001
+    alpha = 0.000001
     result = range * (vol - self.VOLUME_MIN) * alpha
-    print(result)
     return result
 
 

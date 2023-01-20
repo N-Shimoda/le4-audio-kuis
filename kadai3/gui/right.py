@@ -105,6 +105,13 @@ class RightFrame(tk.Frame):
     self.volume_canvas = VolumeView(master=self.volume_frame)
     self.volume_canvas.pack()
 
+    label = ttk.Label(
+      master=self.volume_frame,
+      text="Volume",
+      font=("",16)
+    )
+    label.pack()
+
 
   def _play_button_Cb(self):
     
@@ -211,22 +218,19 @@ class RightFrame(tk.Frame):
         self.master.spectrogram_data_music[:, -1] = fft_log_abs_spec
   
 
-  # 再生時間の表示を随時更新する関数
+  # function to update GUI of playing time, volume and calory
   def _update_gui(self):
 
     while True:
 
-      # update playing time
+      # update playing time & calory
       if self.master.is_playing:
-        # self.master.text.set('%.3f [s]' % self.master.now_playing_sec)
         self.master.text.set( self._generate_playing_time() )
+        self.calory_text.set( self._generate_calory(self.master.calory) )
 
       # update volume plot (always)
       self.volume_canvas.set_volume( self.master.volume_data[-1] )
 
-      # update calory
-      self.calory_text.set( self._generate_calory(self.master.calory) )
-      
       # 0.01秒ごとに更新
       time.sleep(0.01)
 
