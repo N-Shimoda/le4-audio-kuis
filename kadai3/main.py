@@ -54,7 +54,7 @@ class Application(tk.Frame):
   # ----- variables for audio player -----
   is_playing = False
   now_playing_sec = 0.0
-  total_time = None
+  total_time = None       # total time of mp3 [seconds]
   text = None
 
   

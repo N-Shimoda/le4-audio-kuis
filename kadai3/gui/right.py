@@ -20,6 +20,7 @@ class RightFrame(tk.Frame):
   text_thread = None
 
   audio_data = None
+  playing_pos = 0
   
 
   def __init__(self, master=None):
@@ -39,7 +40,6 @@ class RightFrame(tk.Frame):
     if self.master.filename is not None:
       self.audio_data = AudioSegment.from_mp3(self.master.filename)
       self.master.total_time = self.audio_data.duration_seconds
-      print(self.master.total_time)
     else:
       self.audio_data = None
 
@@ -147,7 +147,7 @@ class RightFrame(tk.Frame):
     # ここでは10ミリ秒ごとに読み込む
 
     size_frame_music = 10	# 10ミリ秒毎に読み込む
-    idx = 0
+    idx = self.playing_pos
 
     # make_chunks関数を使用して一定のフレーム毎に音楽ファイルを読み込む
     #
@@ -158,11 +158,14 @@ class RightFrame(tk.Frame):
 
       # GUIが終了してれば、この関数の処理も終了する
       if self.master.is_playing == False:
+        # update playng_pos
+        self.playing_pos = idx
+        print(self.playing_pos)
         break
 
       # pyaudioの再生ストリームに切り出した音楽データを流し込む
       # 再生が完了するまで処理はここでブロックされる
-      stream_play.write(chunk._data)
+      stream_play.write(chunk._data)    # generate sound HERE
       
       # 現在の再生位置を計算（単位は秒）
       self.master.now_playing_sec = (idx * size_frame_music) / 1000.
@@ -217,6 +220,8 @@ class RightFrame(tk.Frame):
 
       # update volume plot (always)
       self.volume_canvas.set_volume( self.master.volume_data[-1] )
+
+      # 
       
       # 0.01秒ごとに更新
       time.sleep(0.01)
