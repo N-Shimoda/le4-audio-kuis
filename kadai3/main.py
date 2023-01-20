@@ -54,6 +54,7 @@ class Application(tk.Frame):
   # ----- variables for audio player -----
   is_playing = False
   now_playing_sec = 0.0
+  total_time = None
   text = None
 
   
@@ -63,13 +64,13 @@ class Application(tk.Frame):
     super().__init__(master, width=1200, height=800)
     self["bg"]="black"
     self.pack(expand=True, fill="both")
-    self.text = tk.StringVar(value='0.0 [s]')   # text needs to be created before `self.create_frames()`
+    self.text = tk.StringVar(value="Press Play button to start the game!")   # text needs to be created before `self.create_frames()`
 
     # ----- Children -----
     self.create_menubar()
     self.create_frames()
 
-    # ----- backend -----
+    # ----- activate microphone -----
     p = pyaudio.PyAudio()
     self.stream = p.open(
       format = pyaudio.paFloat32,

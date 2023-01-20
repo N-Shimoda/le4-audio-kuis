@@ -14,7 +14,6 @@ class RightFrame(tk.Frame):
   info_frame = None
   button_frame = None
   volume_frame = None
-
   volume_canvas = None
   
   audio_thread = None
@@ -39,6 +38,8 @@ class RightFrame(tk.Frame):
     # pydubを使用して音楽ファイルを読み込む
     if self.master.filename is not None:
       self.audio_data = AudioSegment.from_mp3(self.master.filename)
+      self.master.total_time = self.audio_data.duration_seconds
+      print(self.master.total_time)
     else:
       self.audio_data = None
 
@@ -67,7 +68,6 @@ class RightFrame(tk.Frame):
 
 
   def create_labels(self):
-
     """
     score_label = ttk.Label(
       master=self.info_frame,
@@ -107,13 +107,14 @@ class RightFrame(tk.Frame):
     
     if not self.master.is_playing:
 
+      # play audio & update GUI in different threads
       self.audio_thread = threading.Thread(target=self._play_audio)
       self.text_thread = threading.Thread(target=self._update_gui)
       self.audio_thread.setDaemon(True)
       self.text_thread.setDaemon(True)
       
+      # set flag as True, and start threads
       self.master.is_playing = True
-
       self.audio_thread.start()
       self.text_thread.start()
 
@@ -131,9 +132,9 @@ class RightFrame(tk.Frame):
     p_play = pyaudio.PyAudio()
     stream_play = p_play.open(
       format = p.get_format_from_width(self.audio_data.sample_width),	# ストリームを読み書きするときのデータ型
-      channels = self.audio_data.channels,								# チャネル数
+      channels = self.audio_data.channels,							# チャネル数
       rate = self.audio_data.frame_rate,								# サンプリングレート
-      output = True   										# 出力モードに設定
+      output = True   										              # 出力モードに設定
     )
 
 
@@ -211,10 +212,35 @@ class RightFrame(tk.Frame):
 
       # update playing time
       if self.master.is_playing:
-        self.master.text.set('%.3f [s]' % self.master.now_playing_sec)
+        # self.master.text.set('%.3f [s]' % self.master.now_playing_sec)
+        self.master.text.set( self._generate_playing_time() )
 
       # update volume plot (always)
       self.volume_canvas.set_volume( self.master.volume_data[-1] )
       
       # 0.01秒ごとに更新
       time.sleep(0.01)
+
+  
+  def _generate_playing_time(self):
+
+    return _seconds2mss(self.master.now_playing_sec) + " / " + _seconds2mss(self.master.total_time)
+
+
+"""
+  Function to convert seconds into [m:ss]
+  params : seconds
+  return : [m:ss]
+"""
+def _seconds2mss(seconds):
+
+  ss = int(seconds % 60)
+  if ss < 10:
+    ss = "0{}".format(ss)
+  
+  result = "{}:{}".format(
+    int(seconds // 60),
+    ss,
+  )
+
+  return result

@@ -112,7 +112,7 @@ class LeftFrame(tk.Frame):
     )
 
     # matplotlib を GUI(Tkinter) に追加する
-    toolbar = NavigationToolbar2Tk(canvas, self.draw_frame)
+    # toolbar = NavigationToolbar2Tk(canvas, self.draw_frame)
     canvas.get_tk_widget().pack(expand=True, fill="both")
 
 
@@ -121,7 +121,6 @@ class LeftFrame(tk.Frame):
     # label to show playing time
     self.time_label = tk.Label(
       master=self.tabbar_frame,
-      # text="{} / 4:55".format(self.master.text),
       textvariable=self.master.text,
       font=("Helvetica", 16)
     )
