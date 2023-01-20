@@ -19,8 +19,8 @@ class LeftFrame(tk.Frame):
 
   time_label = None
 
-  NN_MIN = 36
-  NN_MAX = 60
+  NN_MIN = 0
+  NN_MAX = 12
 
 
   def __init__(self, master=None):

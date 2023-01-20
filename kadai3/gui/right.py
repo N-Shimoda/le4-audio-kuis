@@ -6,15 +6,21 @@ import time
 import pyaudio
 from pydub import AudioSegment
 from pydub.utils import make_chunks
+from gui.volume_view import VolumeView
 
 
 class RightFrame(tk.Frame):
 
   info_frame = None
   button_frame = None
-  audio_data = None
+  volume_frame = None
+
+  volume_canvas = None
+  
   audio_thread = None
   text_thread = None
+
+  audio_data = None
   
 
   def __init__(self, master=None):
@@ -27,6 +33,7 @@ class RightFrame(tk.Frame):
     self.create_frames()
     self.create_labels()
     self.create_buttons()
+    self.create_volume_view()
 
     # ----- Audiodata (backend) -----
     # pydubを使用して音楽ファイルを読み込む
@@ -48,9 +55,15 @@ class RightFrame(tk.Frame):
       bd=2,
       relief="raised"
     )
+    self.volume_frame = tk.Frame(
+      master=self,
+      bd=2,
+      relief="raised"
+    )
 
     self.info_frame.pack(expand=True, anchor="s")
     self.button_frame.pack(expand=True, anchor="n")
+    self.volume_frame.pack(expand=True, anchor="n")
 
 
   def create_labels(self):
@@ -82,12 +95,18 @@ class RightFrame(tk.Frame):
     play_button.pack()
 
 
+  def create_volume_view(self):
+
+    self.volume_canvas = VolumeView(master=self.volume_frame)
+    self.volume_canvas.pack()
+
+
   def _play_button_Cb(self):
     
     if not self.master.is_playing:
 
       self.audio_thread = threading.Thread(target=self._play_audio)
-      self.text_thread = threading.Thread(target=self._update_gui_text)
+      self.text_thread = threading.Thread(target=self._update_gui)
       self.audio_thread.setDaemon(True)
       self.text_thread.setDaemon(True)
       
@@ -184,15 +203,16 @@ class RightFrame(tk.Frame):
   
 
   # 再生時間の表示を随時更新する関数
-  def _update_gui_text(self):
-
-    # global is_gui_running, now_playing_sec, text
+  def _update_gui(self):
 
     while True:
 
-      # GUIが表示されていれば再生位置（秒）をテキストとしてGUI上に表示
+      # update playing time
       if self.master.is_playing:
         self.master.text.set('%.3f [s]' % self.master.now_playing_sec)
+
+      # update volume plot (always)
+      self.volume_canvas.set_volume( self.master.volume_data[-1] )
       
       # 0.01秒ごとに更新
       time.sleep(0.01)

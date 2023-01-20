@@ -12,7 +12,7 @@ class Application(tk.Frame):
   # ----- variables for gui -----
   left_frame = None
   right_frame = None
-  filename = "mp3/promenade.mp3"
+  filename = "mp3/hotaru_no_hikari.mp3"
   # filename = None
 
   # ----- variables for canvas preference -----
@@ -163,9 +163,8 @@ class Application(tk.Frame):
 
       nn_range = range(36,60)   # range of note number
       pitch, _ = estimate_melody_f0(nn_range, fft_log_abs_spec, self.SAMPLING_RATE)
-      print(pitch)
       self.pitch_data = np.roll(self.pitch_data, -1)
-      self.pitch_data[-1] = pitch
+      self.pitch_data[-1] = pitch % 12
     
     # 戻り値は pyaudio の仕様に従うこと
     return None, pyaudio.paContinue
