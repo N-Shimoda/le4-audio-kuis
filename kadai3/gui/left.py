@@ -91,7 +91,7 @@ class LeftFrame(tk.Frame):
     # 音量をプロットする
     # 戻り値はデータの更新 & 再描画のために必要
     # self.ax2_sub, = ax2.plot(self.master.time_x_data, self.master.volume_data, c='y')
-    self.ax2_sub, = ax2.plot(self.master.time_x_data, self.master.pitch_data, c='y')
+    self.ax2_sub, = ax2.plot(self.master.time_x_data, self.master.pitch_data, c='black')
 
     # ラベルの設定
     ax1.set_xlabel('sec')				# x軸のラベルを設定

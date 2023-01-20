@@ -182,7 +182,7 @@ class Application(tk.Frame):
         self.pitch_data[-1] = 0
         self.not_sing_count += 1
 
-      if self.not_sing_count > 1000:
+      if self.not_sing_count > 600:
         tkinter.messagebox.showinfo("Warning", "Please sing.")
         self.not_sing_count = 0
     
