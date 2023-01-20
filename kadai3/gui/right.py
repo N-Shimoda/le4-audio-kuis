@@ -21,6 +21,7 @@ class RightFrame(tk.Frame):
 
   audio_data = None
   playing_pos = 0
+  calory_text = None
   
 
   def __init__(self, master=None):
@@ -30,6 +31,8 @@ class RightFrame(tk.Frame):
     self.pack(fill="y")
 
     # ----- Children -----
+    self.calory_text = tk.StringVar(value="0.0 kcal")
+
     self.create_frames()
     self.create_labels()
     self.create_buttons()
@@ -80,7 +83,7 @@ class RightFrame(tk.Frame):
 
     calory_label = ttk.Label(
       master=self.info_frame,
-      text="54.0 kcal",
+      textvariable=self.calory_text,
       font=("Helvetica", "32"),
       relief="raised"
     )
@@ -221,7 +224,8 @@ class RightFrame(tk.Frame):
       # update volume plot (always)
       self.volume_canvas.set_volume( self.master.volume_data[-1] )
 
-      # 
+      # update calory
+      self.calory_text.set( self._generate_calory(self.master.calory) )
       
       # 0.01秒ごとに更新
       time.sleep(0.01)
@@ -230,6 +234,11 @@ class RightFrame(tk.Frame):
   def _generate_playing_time(self):
 
     return _seconds2mss(self.master.now_playing_sec) + " / " + _seconds2mss(self.master.total_time)
+
+
+  def _generate_calory(self, value):
+
+    return "{} kcal".format(round(value,1))
 
 
 """
