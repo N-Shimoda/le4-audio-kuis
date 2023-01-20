@@ -172,7 +172,7 @@ class Application(tk.Frame):
       self.pitch_data[-1] = pitch % 12
 
       
-      if vol > -45:
+      if vol > -50:
         # update calory
         self.calory += self._volume2calory(vol)
         self.not_sing_count = 0
