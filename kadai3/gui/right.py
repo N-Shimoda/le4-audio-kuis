@@ -15,6 +15,7 @@ class RightFrame(tk.Frame):
   audio_data = None
   audio_thread = None
   text_thread = None
+  
 
   def __init__(self, master=None):
 
@@ -192,7 +193,6 @@ class RightFrame(tk.Frame):
       # GUIが表示されていれば再生位置（秒）をテキストとしてGUI上に表示
       if self.master.is_playing:
         self.master.text.set('%.3f [s]' % self.master.now_playing_sec)
-        print("updated text: {}".format(self.master.text.get()))
       
       # 0.01秒ごとに更新
       time.sleep(0.01)

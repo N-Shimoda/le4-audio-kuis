@@ -4,16 +4,18 @@ import numpy as np
 import pyaudio
 from gui.left import LeftFrame
 from gui.right import RightFrame
+from src.melody_funs import estimate_melody_f0
 
 
 class Application(tk.Frame):
 
+  # ----- variables for gui -----
   left_frame = None
   right_frame = None
   filename = "mp3/promenade.mp3"
   # filename = None
 
-  # ----- preference -----
+  # ----- variables for canvas preference -----
   SAMPLING_RATE = 16000
   FRAME_SIZE = 2048
   SHIFT_SIZE = int(SAMPLING_RATE / 20)	# サイズシフト。今回は0.05秒
@@ -38,17 +40,20 @@ class Application(tk.Frame):
   time_x_data = np.linspace(0, NUM_DATA_SHOWN * (SHIFT_SIZE/SAMPLING_RATE), NUM_DATA_SHOWN)
   freq_y_data = np.linspace(8000/MAX_NUM_SPECTROGRAM, 8000, MAX_NUM_SPECTROGRAM)
 
-  x_stacked_data = np.array([])
-  x_stacked_data_music = np.array([])
+  # ----- arrays for storing data -----
+  x_stacked_data = np.array([])         # currently recorded sound (microphone)
+  x_stacked_data_music = np.array([])   # currently played sound (mp3)
   spectrogram_data = None
   spectrogram_data_music = np.zeros((len(freq_y_data), len(time_x_data)))    
-  volume_data = None
+  volume_data = np.zeros(len(time_x_data))
+  pitch_data = np.zeros(len(time_x_data))
 
   hamming_window = np.hamming(FRAME_SIZE)
   stream = None
-  now_playing_sec = 0.0
+  
+  # ----- variables for audio player -----
   is_playing = False
-
+  now_playing_sec = 0.0
   text = None
 
   
@@ -151,9 +156,15 @@ class Application(tk.Frame):
       self.spectrogram_data[:, -1] = fft_log_abs_spec
 
       # 音量も同様の処理
+      # store current volume & pitch in variables
       vol = 20 * np.log10(np.mean(x_current_frame ** 2) + self.EPSILON)
       self.volume_data = np.roll(self.volume_data, -1)
       self.volume_data[-1] = vol
+
+      nn_range = np.arange(36,61,0.1)   # range of note number
+      pitch, _ = estimate_melody_f0(nn_range, fft_log_abs_spec, self.SAMPLING_RATE)
+      self.pitch_data = np.roll(self.pitch_data, -1)
+      self.pitch_data[-1] = pitch
     
     # 戻り値は pyaudio の仕様に従うこと
     return None, pyaudio.paContinue

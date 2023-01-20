@@ -19,6 +19,9 @@ class LeftFrame(tk.Frame):
 
   time_label = None
 
+  NN_MIN = 36
+  NN_MAX = 60
+
 
   def __init__(self, master=None):
 
@@ -58,7 +61,6 @@ class LeftFrame(tk.Frame):
     # とりあえず初期値（ゼロ）のスペクトログラムと音量のデータを作成
     # この numpy array にデータが更新されていく
     self.master.spectrogram_data = np.zeros((len(self.master.freq_y_data), len(self.master.time_x_data)))
-    self.master.volume_data = np.zeros(len(self.master.time_x_data))
 
     # 楽曲のスペクトログラムを格納するデータ（このサンプルでは計算のみ）
     self.master.spectrogram_data_music = np.zeros((len(self.master.freq_y_data), len(self.master.time_x_data)))
@@ -88,7 +90,8 @@ class LeftFrame(tk.Frame):
 
     # 音量をプロットする
     # 戻り値はデータの更新 & 再描画のために必要
-    self.ax2_sub, = ax2.plot(self.master.time_x_data, self.master.volume_data, c='y')
+    # self.ax2_sub, = ax2.plot(self.master.time_x_data, self.master.volume_data, c='y')
+    self.ax2_sub, = ax2.plot(self.master.time_x_data, self.master.pitch_data, c='y')
 
     # ラベルの設定
     ax1.set_xlabel('sec')				# x軸のラベルを設定
@@ -96,7 +99,8 @@ class LeftFrame(tk.Frame):
     ax2.set_ylabel('volume [dB]')		# 反対側のy軸のラベルを設定
 
     # 音量を表示する際の値の範囲を設定
-    ax2.set_ylim([self.master.VOLUME_MIN, self.master.VOLUME_MAX])
+    # ax2.set_ylim([self.master.VOLUME_MIN, self.master.VOLUME_MAX])
+    ax2.set_ylim([self.NN_MIN, self.NN_MAX])
 
     # maplotlib animationを設定
     # if self.ax1_sub is not None:
@@ -141,6 +145,7 @@ class LeftFrame(tk.Frame):
     self.ax1_sub.set_array(self.master.spectrogram_data)
     # ax1_sub.set_array(spectrogram_data_music)   # このようにすれば楽曲のスペクトログラムが表示される
     
-    self.ax2_sub.set_data(self.master.time_x_data, self.master.volume_data)
+    # self.ax2_sub.set_data(self.master.time_x_data, self.master.volume_data)
+    self.ax2_sub.set_data(self.master.time_x_data, self.master.pitch_data)
     
     return self.ax1_sub, self.ax2_sub
