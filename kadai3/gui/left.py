@@ -17,6 +17,9 @@ class LeftFrame(tk.Frame):
   ax2_sub = None
   ani = None
 
+  time_label = None
+
+
   def __init__(self, master=None):
 
     # ----- Root of left frame -----
@@ -111,13 +114,16 @@ class LeftFrame(tk.Frame):
 
   def create_tabbar(self):
 
-    time_label = ttk.Label(
+    # label to show playing time
+    self.time_label = tk.Label(
       master=self.tabbar_frame,
-      text="3:34 / 4:55",
-      font=("naonao", 16)
+      # text="{} / 4:55".format(self.master.text),
+      textvariable=self.master.text,
+      font=("Helvetica", 16)
     )
-    time_label.pack(anchor="w")
+    self.time_label.pack(anchor="w")
 
+    # scale (tabbar) to show playing time
     var_scale_ttk = tk.DoubleVar()
     scale = ttk.Scale(
       master=self.tabbar_frame,
@@ -132,12 +138,8 @@ class LeftFrame(tk.Frame):
   # 再描画はmatplotlib animationが行う
   def _animate(self, frame_index):
 
-    print("animate")
-
     self.ax1_sub.set_array(self.master.spectrogram_data)
-
-    # この上の処理を下記のようにすれば楽曲のスペクトログラムが表示される
-    # ax1_sub.set_array(spectrogram_data_music)
+    # ax1_sub.set_array(spectrogram_data_music)   # このようにすれば楽曲のスペクトログラムが表示される
     
     self.ax2_sub.set_data(self.master.time_x_data, self.master.volume_data)
     

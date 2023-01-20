@@ -2,6 +2,7 @@ import tkinter as tk
 import tkinter.ttk as ttk
 import numpy as np
 import threading
+import time
 import pyaudio
 from pydub import AudioSegment
 from pydub.utils import make_chunks
@@ -11,9 +12,9 @@ class RightFrame(tk.Frame):
 
   info_frame = None
   button_frame = None
-  is_playing = False
   audio_data = None
   audio_thread = None
+  text_thread = None
 
   def __init__(self, master=None):
 
@@ -82,13 +83,20 @@ class RightFrame(tk.Frame):
 
   def _play_button_Cb(self):
     
-    if not self.is_playing:
+    if not self.master.is_playing:
+
       self.audio_thread = threading.Thread(target=self._play_audio)
+      self.text_thread = threading.Thread(target=self._update_gui_text)
+      self.audio_thread.setDaemon(True)
+      self.text_thread.setDaemon(True)
+      
+      self.master.is_playing = True
+
       self.audio_thread.start()
-      self.is_playing = True
+      self.text_thread.start()
 
     else:
-      self.is_playing = False
+      self.master.is_playing = False
       self.audio_thread.join()
 
 
@@ -126,7 +134,7 @@ class RightFrame(tk.Frame):
     for chunk in make_chunks(self.audio_data, size_frame_music):
 
       # GUIが終了してれば、この関数の処理も終了する
-      if self.is_playing == False:
+      if self.master.is_playing == False:
         break
 
       # pyaudioの再生ストリームに切り出した音楽データを流し込む
@@ -134,7 +142,7 @@ class RightFrame(tk.Frame):
       stream_play.write(chunk._data)
       
       # 現在の再生位置を計算（単位は秒）
-      now_playing_sec = (idx * size_frame_music) / 1000.
+      self.master.now_playing_sec = (idx * size_frame_music) / 1000.
       idx += 1
 
       #
@@ -172,3 +180,19 @@ class RightFrame(tk.Frame):
         # 最後の列（＝最後の時刻のスペクトルがあった位置）に最新のスペクトルデータを挿入
         self.master.spectrogram_data_music = np.roll(self.master.spectrogram_data_music, -1, axis=1)
         self.master.spectrogram_data_music[:, -1] = fft_log_abs_spec
+  
+
+  # 再生時間の表示を随時更新する関数
+  def _update_gui_text(self):
+
+    # global is_gui_running, now_playing_sec, text
+
+    while True:
+
+      # GUIが表示されていれば再生位置（秒）をテキストとしてGUI上に表示
+      if self.master.is_playing:
+        self.master.text.set('%.3f [s]' % self.master.now_playing_sec)
+        print("updated text: {}".format(self.master.text.get()))
+      
+      # 0.01秒ごとに更新
+      time.sleep(0.01)

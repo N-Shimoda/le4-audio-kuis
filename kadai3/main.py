@@ -46,7 +46,11 @@ class Application(tk.Frame):
 
   hamming_window = np.hamming(FRAME_SIZE)
   stream = None
-  
+  now_playing_sec = 0.0
+  is_playing = False
+
+  text = None
+
   
   def __init__(self, master=None):
 
@@ -54,6 +58,7 @@ class Application(tk.Frame):
     super().__init__(master, width=1200, height=800)
     self["bg"]="black"
     self.pack(expand=True, fill="both")
+    self.text = tk.StringVar(value='0.0 [s]')   # text needs to be created before `self.create_frames()`
 
     # ----- Children -----
     self.create_menubar()
