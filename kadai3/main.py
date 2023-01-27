@@ -13,8 +13,8 @@ class Application(tk.Frame):
   # ----- variables for gui -----
   left_frame = None
   right_frame = None
-  filename = "mp3/hotaru_no_hikari.mp3"
-  # filename = None
+  filename = None
+  # filename = "mp3/hotaru_no_hikari.mp3"
 
   # ----- variables for canvas preference -----
   SAMPLING_RATE = 16000

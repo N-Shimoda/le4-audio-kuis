@@ -67,8 +67,8 @@ class LeftFrame(tk.Frame):
 
     # スペクトログラムを描画する際に横軸と縦軸のデータを行列にしておく必要がある
     # これは下記の matplotlib の pcolormesh の仕様のため
-    X = np.zeros(self.master.spectrogram_data.shape)
-    Y = np.zeros(self.master.spectrogram_data.shape)
+    X = np.zeros(self.master.spectrogram_data_music.shape)
+    Y = np.zeros(self.master.spectrogram_data_music.shape)
     for idx_f, f_v in enumerate(self.master.freq_y_data):
       for idx_t, t_v in enumerate(self.master.time_x_data):
         X[idx_f, idx_t] = t_v
@@ -79,7 +79,7 @@ class LeftFrame(tk.Frame):
     self.ax1_sub = ax1.pcolormesh(
       X,
       Y,
-      self.master.spectrogram_data,
+      self.master.spectrogram_data_music,
       shading='nearest',	# 描画スタイル
       cmap='jet',			# カラーマップ
       norm=Normalize(self.master.SPECTRUM_MIN, self.master.SPECTRUM_MAX)	# 値の最小値と最大値を指定して，それに色を合わせる
@@ -94,9 +94,9 @@ class LeftFrame(tk.Frame):
     self.ax2_sub, = ax2.plot(self.master.time_x_data, self.master.pitch_data, c='black')
 
     # ラベルの設定
-    ax1.set_xlabel('sec')				# x軸のラベルを設定
+    ax1.set_xlabel('sec')				      # x軸のラベルを設定
     ax1.set_ylabel('frequency [Hz]')	# y軸のラベルを設定
-    ax2.set_ylabel('volume [dB]')		# 反対側のy軸のラベルを設定
+    ax2.set_ylabel('note number')		  # 反対側のy軸のラベルを設定
 
     # 音量を表示する際の値の範囲を設定
     # ax2.set_ylim([self.master.VOLUME_MIN, self.master.VOLUME_MAX])
